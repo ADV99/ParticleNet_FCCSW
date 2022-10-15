@@ -26,8 +26,8 @@ So the production of the training dataset from the generated samples is performe
 Even though the joint action of the two steps, an intermediate file is produced by _Stage1_, which will be saved in the ouptut directory (_OUTDIR_) with a recognizable name.
 
 For what concerns time: 
-* _Stage1_ takes $\sim 3-4$ minutes per $10^6$ events;
-* _Stage_ntuple_ takes $\sim 5$ minutes per $10^6$ events.
+* _Stage1_ takes $\sim 3-4$ minutes per $10^6$ events (run on 8 cpus);
+* _Stage_ntuple_ takes $\sim 5$ minutes per $10^6$ events (run on 1 cpu).
 
 For what concerns memory usage:
 * intermediate files weight $\sim 4$ Gb per $10^6$ events; 
@@ -36,8 +36,7 @@ For what concerns memory usage:
 In our case the directory containing the intermediate and final files weights $\sim 50$ Gb .
 We notice that the intermediate files could be deleted after the production of the final ntuples.
 
-Five classes are considered: $\{ q = (u,d), b, c, s, g\}$.
-
+In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class 5Millione
 
 ### Stage1
 
@@ -55,5 +54,8 @@ Notice: independently of the process which generated it
 ## How to run this example
 
 # Evaluation
+ 
 
-``` aaa ``` 
+# What could be improved
+* the stage 1 doesn't reduce the statistics if needed, only in stage_ntuple this is done; this implies heavier intermediate files and longer times even when I want to consider small fractions of the initial samples. Stage_ntuple runs only on the required statistics.
+*  ... ```...```
