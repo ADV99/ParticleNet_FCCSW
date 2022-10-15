@@ -1,8 +1,8 @@
 # Intro: Training ParticleNet in FCCSW
 This repository contains the codes developed to perform the training of ParticleNet inside FCCSW and aims to furnish an example of how to set up the training.
 We can identify in the complete process of training ParticleNet four main stages:
-1. generation of the events;
-2. preparation of dataset;
+1. generation of events;
+2. preparation of the dataset;
 3. training;
 4. evaluation.
 
