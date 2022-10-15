@@ -171,6 +171,7 @@ loop : events {
 	}
 }
 ```
+
 The position of ntuple.Fill() inside the loop structure determines the per-jet structure.
 We modified this basic structure:
 We insert where to start looping by N_i and how many events to consider by $Nevents_Max = N_f - N_i$;
@@ -179,7 +180,9 @@ Let's study different cases:
 If $nentries - N_i < Nevents_Max$ $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed $saved_events_counts$; 
 If $nentries - N_i > Nevents_Max$ $\implies$ in the file there are exactly $Nevents_Max$; 
 If $nentries - N_i = Nevents_Max$ but there are strange events I will have less saved events, no error, but I know from stdout.
-	
+
+Are considered "strange" events those in which the clustering returns njets < 2; in that case we skip the loop. If n >= 2 the loop is performed on the first two jets only (the ones having more ENERGY, they're ordered in stage1; the successives not expected: leak in clustering).
+
 ```
 int N_i = atoi(argv[3]); //where to start reading the tree
 int N_f = atoi(argv[4]); 
@@ -190,22 +193,13 @@ int nentries = ev->GetEntries(); //total number of events in the tree
 for(int i = N_i+1; i < nentries; ++i) { // Loop over the events 
 	ev->GetEntry(i);
     	njet = nJets;
-
-    	if(njet != 2) {
-        	anomaly_njets_counts += 1;
-       		if (njet > 2) {
-			anomaly_njets_counts_more += 1;
-    		} else {
-			anomaly_njets_counts_less += 1;
-      		}
-    	}
     
     	if (njet < 2) {   //exclude the events with less than two jets
       		continue ;
     	}
 		     
 	for(int j=0; j < 2; ++j) {   //Loop over the jets inside the i-th event
-	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1); the third not expected: leak in clustering
+	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1), the third not expected: leak in clustering
 	
 		recojet_e = (*Jets_e)[j];
 		nconst = (count_Const->at(j));
@@ -213,7 +207,7 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
 		for(int k = 0; k < nconst; ++k){ //Loop over the constituents of the j-th jet in the i-th event
 			pfcand_e[k] = (JetsConstituents_e->at(j))[k];
 		}
-	ntuple->Fill();	
+		ntuple->Fill();	
 	}
 	saved_events_counts += 1; //we count the num of events saved
 	if (saved_events_counts == Nevents_Max) { //interrupt the loop if Nevents_max events have already been saved
@@ -223,9 +217,10 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
 ```
 	
 	
-* How to read the _Stage1_ tree; in particular, how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays. As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
+* Translating
+How to read the _Stage1_ tree; in particular, how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays. As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
 
-Setting variables for reading:
+Setting variables for reading: 
 ```
 int nJets;
 int nconst = 0; //number of constituents of the jets
@@ -240,8 +235,17 @@ ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);
 int njet = 0;
 int nconst = 0;
 	
-double recojet_e;
-float pfcand_e[1000] = {0.};
+double recojet_e; //just a double since it is going to be saved once per jet
+float pfcand_e[1000] = {0.}; //here we insere a large 
+
+loop : i over events
+	loop : j over jets
+	
+		recojet_e = (*Jets_e)[j];       //Pointer usage
+		nconst = (count_Const->at(j));
+	
+		loop : k over constituents
+			pfcand_e[k] = (JetsConstituents_e->at(j))[k]; //k-th element of the j-th vector pointed by JetsConstituents_e
 ```
 
 * Setting the flags: we read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call .Fill the same value will be added to the branch.
@@ -281,11 +285,11 @@ loop : events {
 ```
 
 	
-* how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
-* read jets overall properties
-* create arrays example (for constituents) + floats (for jet overall properties)
-* usage of jet N_i, N_f + stopping when required + cases (see ipad)
-* printing the strange cases
+> how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
+> read jets overall properties
+> create arrays example (for constituents) + floats (for jet overall properties)
+> usage of jet N_i, N_f + stopping when required + cases (see ipad)
+> printing the strange cases
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
 
