@@ -250,7 +250,8 @@ loop : i over events
 			pfcand_e[k] = (JetsConstituents_e->at(j))[k]; //k-th element of the j-th vector pointed by JetsConstituents_e
 ```
 
-In the ntuple, a jet overall property will be just a `double`. Since we don't know a priori how many constituents the jet has, we initialize the constituent property as an array with a number of elements larger than possible number of constituents; we set all the values to 0 . When we actually create the branch of the ntuple (`ntuple->Branch("nconst", &nconst, "nconst/I")`), we pass as the size of the entry the actual number of constituents which has already been read into another branch (during the loop).  
+In the ntuple, a jet overall property will be just a `double`.
+Since we don't know a priori how many constituents the jet has, we initialize a constituent feature as an array with a number of elements larger than possible number of constituents, to be sure that we succeed in reading all of them from the input file (this array works as a temporary "home" before being sent to the output file); we initialize all the values to 0. When we create the branch of the ntuple (`ntuple->Branch("nconst", &nconst, "nconst/I")`), we pass as the size of the entry the actual number of constituents which has already been read into another branch (during the loop), in order not to save all the padding zeros contained in the local array.  
 	
 ###### Setting the flags
 We read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call .Fill the same value will be added to the branch.
@@ -289,12 +290,8 @@ loop : events {
 }	
 ```
 
-	
-> how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
-> read jets overall properties
-> create arrays example (for constituents) + floats (for jet overall properties)
-> usage of jet N_i, N_f + stopping when required + cases (see ipad)
-> printing the strange cases
+###### Countings of anomalies and other useful information
+Along the code there are counters of anomalies; these and other information are printed to stdoout.
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
 
