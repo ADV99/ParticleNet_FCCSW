@@ -109,7 +109,7 @@ rv::RVec<FCCAnalysesJetConstituents> build_constituents_cluster(const rv::RVec<e
 ```
 IMPORTANT: this function associates properly jet-constituents because the labels are set to the particles following the order of the particles as they present in the initial entry; so the index coincides with the particle position in the input branch.
 
-The goodness of the association particles-jets was proven by plotting the histograms of the residuals $( P^\mu_{jet} -  \sum{ P^{\mu}_{constituents} }) / P^\mu_{jet}$ with $P^\mu = (E, \vec{p})$. Actually the residuals were computed on other 4 quantities which are in one to one relation with 4-momenta: $E, p_t, \phi, \theta$.
+The goodness of the association particles-jets was proven by plotting the histograms of the residuals $( P^{\mu}_{jet} -  \sum{ P^{\mu}_{constituents} }) / P^{\mu}_{jet}$ with $P^\mu = (E, \vec{p})$. Actually the residuals were computed on other 4 quantities which are in one to one relation with 4-momenta: $E, p_t, \phi, \theta$.
 	
 	PLOTS!!!
 
