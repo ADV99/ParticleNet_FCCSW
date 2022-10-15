@@ -143,8 +143,12 @@ At the end of this stage we have a tree in which each entry is an event; the fea
 #### What if implicit clustering ?
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
-In this stage we rearrange the tree to a per-jet format, checking the number of events actually considered is the wanted one. 
-Something important also happens: from the clustering happening 
+The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a per-jet format, but other tasks are accomplished:
+* checking the number of events actually considered is the wanted one;
+* there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and a \sim few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
+
+
+
 * 4 arguments: inpath (path/infilename) outpath N_i N_f
 * how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
 * read jets overall properties
@@ -154,9 +158,11 @@ Something important also happens: from the clustering happening
 * printing the strange cases
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
+
 * explain what it is doing
 * explain the multiprocessing choice
 
+* the _Stage_ntuple_ is run twice, once to create the training dataset and once for the test dataset; the splitting fraction train/test is passed as an argument ()
 
 
 
