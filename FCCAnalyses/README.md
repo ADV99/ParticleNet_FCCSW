@@ -157,7 +157,7 @@ The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a p
 Our choices are implemented in the app `produceTrainingTrees_mp.py`, so will be explained in the next section.
 Now, let's go through the code.
 
-###### Loop structure
+##### Loop structure
 
 The general structure of the loop is:
 ```
