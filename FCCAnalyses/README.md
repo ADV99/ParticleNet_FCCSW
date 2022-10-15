@@ -87,11 +87,28 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::set_pseudoJets(ROOT::VecOps:
   return result;
 }
 ``` 
-and that are now used to associate the particles to the belonging jet (notice that the labels are set following the order of the particles as they present in the input event). In fact, by calling
+and that are now used to associate the particles to the belonging jet. In fact, by calling
 ```
 .Define("JetsConstituents", "JetConstituentsUtils::build_constituents_cluster(ReconstructedParticles, jetconstituents_ee_genkt)") #build jet constituents
 ```
-we create an RVec::< RVec <ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet. 
+we create an RVec::< RVec <ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet :
+```
+rv::RVec<FCCAnalysesJetConstituents> build_constituents_cluster(const rv::RVec<edm4hep::ReconstructedParticleData>& rps,
+								    const std::vector<std::vector<int>>& indices) {
+      //std::cout << "... Building jets-constituents after clustering " << std::endl;
+      rv::RVec<FCCAnalysesJetConstituents> jcs;
+      for (const auto& jet_index : indices) {
+	FCCAnalysesJetConstituents jc;
+	for(const auto& const_index : jet_index) {
+	  jc.push_back(rps.at(const_index));
+	}
+	jcs.push_back(jc);
+      }
+      return jcs;
+    }	
+```
+IMPORTANT: this function associates properly jet-constituents because the labels are set to the particles following the order of the particles as they present in the initial entry; so the index coincides with the particle position in the input branch.
+	
 The structure RVec::< RVec < type > > will be mantained also when computing the features of the constituents for this stage.
 Let's see an example of a function computing a feature of the constituents of the jets in one event (the same structure is mantained for other functions):
 ```
