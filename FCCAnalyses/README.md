@@ -39,7 +39,20 @@ We notice that the intermediate files could be deleted after the production of t
 In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
 
 ### Stage1 : `analysis_constituents_stage1_cluster.py`
+* runs with the support of analyzers, in particular we developed JetConstituentsUtils and ReconstructedParticle2Track
+* explicit clustering: where is it done?
+  - labeling 
+  - output format fastjet
+  - association with constituents (build constituents + labels)
+  - treatment of constituents (vectors of vectors of RecPartData)
+  - Validation of clustering : Plots of residuals
+* computation of features: 
+  - show good example
+  - Validation (Michele comparison)
 
+
+
+Alternative: implicit clustering (needs to be validated)
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
 
