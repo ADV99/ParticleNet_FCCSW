@@ -70,10 +70,22 @@ In the initial tree, all the particles measured in one event are saved in one en
 The line `.Define("RP_px",          "ReconstructedParticle::get_px(ReconstructedParticles)")` takes this branch and for all entries computes px of each particle; the output of this call is a branch called _RP_px_ containing an `RVec<float>` per each event.
 
 The jet clustering is performed using the 4-momenta of the reconstructed particles. This operation returns two outputs: 
-  - `jets_ee_genkt` : RVec< fastjet::Pseudojet > , `Pseudojet` methods and attributes allow to access the overall jet properties;
-  - `jetconstituents_ee_genkt` : RVec< RVec < int > > , which is a vector of vectors of integer labels which were assigned to the particles during the clustering by the function `...` : 
+  - `jets_ee_genkt` : `RVec< fastjet::Pseudojet >` ; `Pseudojet` methods and attributes allow to access the overall jet properties (implemented in `JetClusteringUtils.cc`).
+  - `jetconstituents_ee_genkt` : `RVec< RVec < int > >` , which is a vector of vectors of integer labels which were assigned to the particles during the clustering by the function `JetClusteringUtils::set_pseudoJets` : 
 ```
-...
+std::vector<fastjet::PseudoJet> JetClusteringUtils::set_pseudoJets(ROOT::VecOps::RVec<float> px, 
+					       ROOT::VecOps::RVec<float> py, 
+					       ROOT::VecOps::RVec<float> pz, 
+					       ROOT::VecOps::RVec<float> e) {
+  std::vector<fastjet::PseudoJet> result;
+  unsigned index = 0;
+  for (size_t i = 0; i < px.size(); ++i) {
+    result.emplace_back(px.at(i), py.at(i), pz.at(i), e.at(i));
+    result.back().set_user_index(index);
+    ++index;
+  }
+  return result;
+}
 ``` 
 and that are now used to associate the particles to the belonging jet. In fact, by calling
 ```
@@ -83,6 +95,7 @@ we create an RVec::< RVec <ReconstructedParticleData > > in which the first inde
 Let's see an example of a function computing a feature of the constituents of the jets in one event.
  
 Notice: the functions are written considering one event, then the processing of all the events in the tree is performed by `fccanalysis run` command (see `produceTrainingTrees_mp.py`).
+
 At the end of this stage
             
   - treatment of constituents (vectors of vectors of RecPartData)
