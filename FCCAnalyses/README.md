@@ -140,15 +140,6 @@ The computed features were also validated by comparing them with the ones obtain
 
 At the end of this stage we have a tree in which each entry is an event; the features of the jets are saved as `RVec < float > ` and the features of the constituents of the jets are saved as `RVec < RVec < float > >` ; the return type is actually a pointer to these structures. We still need to rearrange the structure from a per-event tree of pointers to RVec to a per-jet tree of arrays (an ntuple).
 
-	
-* treatment of constituents (vectors of vectors of RecPartData)
-* Validation of clustering : Plots of residuals
-* computation of features: 
-  - show good example
-  - Validation (Michele comparison)
-* output : pointer!!! to vector of vectors of floats (first index -> jet, second index -> constituents of the ith jet)
-
-
 #### What if implicit clustering ?
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
