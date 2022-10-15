@@ -146,10 +146,27 @@ At the end of this stage we have a tree in which each entry is an event; the fea
 The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a per-jet format, but other tasks are accomplished:
 * checking the number of events actually considered is the wanted one;
 * there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and a \sim few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
+	
+`MakeNtuple_constituents2.cpp` takes 4 arguments: `USAGE: ./to_jetntuple [root_inFileName] [root_outFileName] N_i N_f`
+1. [root_inFileName] : path to input file in the form `path_to_stage1file/stage1_infilename` , 
+2. [root_outFileName] : path to output file in the form `path_to_outputdir/outfilename` ,
+3. N_i : index of the event from where start reading the tree ,
+4. N_f : index of the event ehrtr to stop reading the tree .
 
+Our choices are implemented in the app `produceTrainingTrees_mp.py`, so will be explained in the next section.
+Now, let's go through the code and see how to read the _Stage1_ tree; in particular we see how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays.
 
+As an example, we take one jet feature (`RVec < float>`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
+Reading
+```
+...
+```
+Copying
+```
+...	
+```
 
-* 4 arguments: inpath (path/infilename) outpath N_i N_f
+	
 * how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
 * read jets overall properties
 * create arrays example (for constituents) + floats (for jet overall properties)
