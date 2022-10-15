@@ -2,9 +2,10 @@
 ## Generated samples
 The samples used are stored in the directory `/eos/experiment/fcc/ee/generation/DelphesEvents/pre_fall2022_training/IDEA/` .
 The events were simulated using Delphes. 
-The processes considered are $e^+ e^- \to Z(\to \nu \nu) H(\to aa)$ with $a = u,d,b,c,s,g$ .
+The processes considered are $e^+ e^- \to Z(\to \nu \nu) H(\to aa)$ with $a = u,d,b,c,s,g$.
+For each process a sample of $10^6$ events was produced.
 Beamspot of 20 um size on Y-axis and 600 um on Z-axis was set.
-Five classes are considered: $\{\}$
+Five classes are considered: $\{ q = (u,d), b, c, s, g\}$.
 
 ## Description
 In this phase the
