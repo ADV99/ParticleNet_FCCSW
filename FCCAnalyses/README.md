@@ -157,7 +157,8 @@ The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a p
 Our choices are implemented in the app `produceTrainingTrees_mp.py`, so will be explained in the next section.
 Now, let's go through the code.
 
-* Loop structure
+###### Loop structure
+
 The general structure of the loop is:
 ```
 loop : events {
@@ -217,7 +218,7 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
 ```
 	
 	
-* Translating
+###### Translating
 How to read the _Stage1_ tree; in particular, how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays. As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
 
 Setting variables for reading: 
@@ -248,7 +249,8 @@ loop : i over events
 			pfcand_e[k] = (JetsConstituents_e->at(j))[k]; //k-th element of the j-th vector pointed by JetsConstituents_e
 ```
 
-* Setting the flags: we read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call .Fill the same value will be added to the branch.
+###### Setting the flags
+We read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call .Fill the same value will be added to the branch.
 ```
 std::string infileName(argv[1]);
 char flavour = infileName[infileName.length()-6];
