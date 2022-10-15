@@ -157,7 +157,7 @@ The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a p
 Our choices are implemented in the app `produceTrainingTrees_mp.py`, so will be explained in the next section.
 Now, let's go through the code.
 
-##### Loop structure
+###### Loop structure
 
 The general structure of the loop is:
 ```
@@ -175,12 +175,12 @@ loop : events {
 
 The position of ntuple.Fill() inside the loop structure determines the per-jet structure.
 We modified this basic structure:
-We insert where to start looping by N_i and how many events to consider by $Nevents_Max = N_f - N_i$;
+We insert where to start looping by N_i and how many events to consider by $Nevents_{Max} = N_f - N_i$;
 We loop over the events from N_i to the end of the tree, but introduce an external counter $saved_events_counts$ which grows only if the event has been saved; this is the reliable counter! In fact, if the event is "strange" we don't save any jet, we skip to the next event.
 Let's study different cases:
-If $nentries - N_i < Nevents_Max$ $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed $saved_events_counts$; 
-If $nentries - N_i > Nevents_Max$ $\implies$ in the file there are exactly $Nevents_Max$; 
-If $nentries - N_i = Nevents_Max$ but there are strange events I will have less saved events, no error, but I know from stdout.
+If $nentries - N_i < Nevents_{Max}$ $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed $saved_events_counts$; 
+If $nentries - N_i > Nevents_{Max}$ $\implies$ in the file there are exactly $Nevents_{Max}$; 
+If $nentries - N_i = Nevents_{Max}$ but there are strange events I will have less saved events, no error, but I know from stdout.
 
 Are considered "strange" events those in which the clustering returns njets < 2; in that case we skip the loop. If n >= 2 the loop is performed on the first two jets only (the ones having more ENERGY, they're ordered in stage1; the successives not expected: leak in clustering).
 
@@ -202,11 +202,12 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
 	for(int j=0; j < 2; ++j) {   //Loop over the jets inside the i-th event
 	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1), the third not expected: leak in clustering
 	
-		recojet_e = (*Jets_e)[j];
+		...
+	
 		nconst = (count_Const->at(j));
 	
 		for(int k = 0; k < nconst; ++k){ //Loop over the constituents of the j-th jet in the i-th event
-			pfcand_e[k] = (JetsConstituents_e->at(j))[k];
+			...
 		}
 		ntuple->Fill();	
 	}
@@ -236,8 +237,8 @@ ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);
 int njet = 0;
 int nconst = 0;
 	
-double recojet_e; //just a double since it is going to be saved once per jet
-float pfcand_e[1000] = {0.}; //here we insere a large 
+double recojet_e; 
+float pfcand_e[1000] = {0.}; //here we initialize wit a large size for the
 
 loop : i over events
 	loop : j over jets
@@ -249,6 +250,8 @@ loop : i over events
 			pfcand_e[k] = (JetsConstituents_e->at(j))[k]; //k-th element of the j-th vector pointed by JetsConstituents_e
 ```
 
+In the ntuple, a jet overall property will be just a `double`. Since we don't know a priori how many constituents the jet has, we initialize the constituent property as an array with a number of elements larger than possible number of constituents; we set all the values to 0 . When we actually create the branch of the ntuple (`ntuple->Branch("nconst", &nconst, "nconst/I")`), we pass as the size of the entry the actual number of constituents which has already been read into another branch (during the loop).  
+	
 ###### Setting the flags
 We read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call .Fill the same value will be added to the branch.
 ```
