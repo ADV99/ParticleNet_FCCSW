@@ -22,9 +22,17 @@ So, before performing the training three actions are required:
 
 In our case, the first two actions are executed by `analysis_constituents_stage1_cluster.py` and the third by `MakeNtuple_constituents2.cpp` .
 Since we are interested in the final ntuple, these two codes are executed jointly by `produceTrainingTrees_mp.py`, optimizing the times through the usage of multiprocessing.
-So the production of the training dataset from the generated samples is performed in two steps, which in the folloing will be referred to as Stage1 and _Stage_ntuple_.
-Even though the joint action of the two steps, an intermediate file is produced by _Stage1_, which will be saved in the ouptut directory (_OUTDIR_) with a recognizable name. 
-The stage1
+So the production of the training dataset from the generated samples is performed in two steps, which in the folloing will be referred to as _Stage1_ and _Stage_ntuple_.
+Even though the joint action of the two steps, an intermediate file is produced by _Stage1_, which will be saved in the ouptut directory (_OUTDIR_) with a recognizable name.
+
+For what concerns time: 
+* _Stage1_ takes $\sim 3-4$ minutes per $10^6$ events;
+* _Stage_ntuple_ takes $\sim 5$ minutes per $10^6$ events.
+
+For what concerns memory usage:
+*
+In our case the directory containing the intermediate and final files weights $\sim 50$ Gb .
+We notice that the intermediate files could be deleted after the production of the final ntuples.
 
 ### Stage1
 
