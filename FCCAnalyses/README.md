@@ -38,12 +38,13 @@ We notice that the intermediate files could be deleted after the production of t
 
 In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
 
-### Stage1
+### Stage1 : `analysis_constituents_stage1_cluster.py`
 
 
-### Stage_ntuple
+### Stage_ntuple : `MakeNtuple_constituents2.cpp`
 
 
+### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
 
 
 
