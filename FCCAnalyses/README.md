@@ -3,11 +3,11 @@
 The samples used are stored in the directory `/eos/experiment/fcc/ee/generation/DelphesEvents/pre_fall2022_training/IDEA/` .
 The events were simulated using Delphes. 
 The processes considered are $e^+ e^- \to Z(\to \nu \nu) H(\to aa)$ with $a = u,d,b,c,s,g$.
-For each process a sample of $\sim 10^6$ events was produced (i.e. $2 \times 10^6$ jets per sample).
+For the processes $a =  u,d,b,c,s$ samples of $\sim 10^6$ events were produced (i.e. $2 \times 10^6$ jets per sample), for $a = g$ $\sim 2 \times 10^6$ (i.e. $2 \times 10^6$ jets per sample).
 Beamspot of 20 um size on Y-axis and 600 um on Z-axis was set.
-Five classes are considered: $\{ q = (u,d), b, c, s, g\}$.
 
-## Description
+
+## Description and usage
 During the training we want ParticleNet to learn to identify a jet from its properties. This means that each entry of the training dataset should contain the properties of one jet (and of its constituents) which are significant for the discrimination only; furthermore, these properties should be organized in a format accessible to ParticleNet: *arrays*.
 
 However, the samples generated
@@ -30,9 +30,14 @@ For what concerns time:
 * _Stage_ntuple_ takes $\sim 5$ minutes per $10^6$ events.
 
 For what concerns memory usage:
-*
+* intermediate files weight $\sim 4$ Gb per $10^6$ events; 
+* final files weight $\sim 4$ Gb per $10^6$ events;
+
 In our case the directory containing the intermediate and final files weights $\sim 50$ Gb .
 We notice that the intermediate files could be deleted after the production of the final ntuples.
+
+Five classes are considered: $\{ q = (u,d), b, c, s, g\}$.
+
 
 ### Stage1
 
