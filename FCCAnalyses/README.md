@@ -95,7 +95,7 @@ At the end of this stage
 * output : pointer!!! to vector of vectors of floats (first index -> jet, second index -> constituents of the ith jet)
 
 
-Alternative: implicit clustering (needs to be validated)
+#### What if implicit clustering ?
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
 * 4 arguments: inpath (path/infilename) outpath N_i N_f
