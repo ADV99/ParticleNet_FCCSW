@@ -5,6 +5,7 @@ The events were simulated using Delphes.
 The processes considered are $e^+ e^- \to Z(\to \nu \nu) H(\to aa)$ with $a = u,d,b,c,s,g$.
 For the processes $a =  u,d,b,c,s$ samples of $\sim 10^6$ events were produced (i.e. $2 \times 10^6$ jets per sample), for $a = g$ $\sim 2 \times 10^6$ (i.e. $2 \times 10^6$ jets per sample).
 Beamspot of 20 um size on Y-axis and 600 um on Z-axis was set.
+Tre tree containing the events in the input .root file is called _events_ .
 
 
 ## Description and usage
@@ -39,8 +40,33 @@ We notice that the intermediate files could be deleted after the production of t
 In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
 
 ### Stage1 : `analysis_constituents_stage1_cluster.py`
+As said, in this stage basically the initial edm4hep files are read and the interesting features are computed. Furthermore, in our version, the clustering is done explicitly. 
+In the initial tree each entry corresponds to an event.
 * runs with the support of analyzers, in particular we developed JetConstituentsUtils and ReconstructedParticle2Track
-* explicit clustering: where is it done?
+Let's go through the code.
+* explicit clustering. The clustering is done explicitly by the following lines:
+```
+            #===== CLUSTERING
+
+            #define the RP px, py, pz and e
+            .Define("RP_px",          "ReconstructedParticle::get_px(ReconstructedParticles)")
+            .Define("RP_py",          "ReconstructedParticle::get_py(ReconstructedParticles)")
+            .Define("RP_pz",          "ReconstructedParticle::get_pz(ReconstructedParticles)")
+            .Define("RP_e",           "ReconstructedParticle::get_e(ReconstructedParticles)")
+            .Define("RP_m",           "ReconstructedParticle::get_mass(ReconstructedParticles)")
+            .Define("RP_q",           "ReconstructedParticle::get_charge(ReconstructedParticles)")
+            
+            #build pseudo jets with the RP
+            .Define("pseudo_jets",    "JetClusteringUtils::set_pseudoJets(RP_px, RP_py, RP_pz, RP_e)")
+            #run jet clustering with all reconstructed particles. ee_genkt_algorithm, R=1.5, inclusive clustering, E-scheme
+            .Define("FCCAnalysesJets_ee_genkt", "JetClustering::clustering_ee_genkt(1.5, 0, 0, 0, 0, -1)(pseudo_jets)")
+            #get the jets out of the struct
+            .Define("jets_ee_genkt",           "JetClusteringUtils::get_pseudoJets(FCCAnalysesJets_ee_genkt)")
+            #get the jets constituents out of the struct
+            .Define("jetconstituents_ee_genkt","JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_genkt)")
+```
+In the initial tree, all the particles measured are saved in the branch _ReconstructedParticles_ in a `ROOT::VecOps::RVec<ReconstructedParticleData>`.
+The line `.Define("RP_px",          "ReconstructedParticle::get_px(ReconstructedParticles)")` takes this branch for all events, and for each particle computes px; the output of this function is a branch called _RP_px_ containing an `RVec<float>` per each event. The namespace `ReconstructedParticle` is defined in the file `analyzers/dataframe/src/ReconstructedParticle.cc`.
   - labeling 
   - output format fastjet
   - association with constituents (build constituents + labels)
