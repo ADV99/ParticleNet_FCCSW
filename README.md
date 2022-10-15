@@ -1,5 +1,5 @@
 # Intro: Training ParticleNet in FCCSW
-The contents of this repository aim to furnish an example of how to set the training of ParticleNet inside FCCSW framework.
+The contents of this repository aim to furnish an example of how to set the training of ParticleNet inside the FCCSW framework.
 
 The implementation of the training chain of ParticleNet jet tagger inside FCCSW framework is presented here. 
 The training chain consists of 5 stages:
