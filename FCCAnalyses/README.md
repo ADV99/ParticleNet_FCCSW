@@ -21,9 +21,10 @@ So, before performing the training three actions are required:
 3. produce the ntuples (one per class) containing the interesting features.
 
 In our case, the first two actions are executed by `analysis_constituents_stage1_cluster.py` and the third by `MakeNtuple_constituents2.cpp` .
-Since we are interested in the final ntuple, these two codes are executed omptimally by `produceTrainingTrees_mp.py` through the usage of multiprocessing.
-So the production of the training dataset from the generated samples is performed in two steps, which in the folloing will be referred to as Stage1 and Stage_ntuple.
-Even though the joint action of the two steps, an intermediate file is produced by Stage1, which will be saved in the ouptut directory (OUTDIR) with a recognizable name. 
+Since we are interested in the final ntuple, these two codes are executed jointly by `produceTrainingTrees_mp.py`, optimizing the times through the usage of multiprocessing.
+So the production of the training dataset from the generated samples is performed in two steps, which in the folloing will be referred to as Stage1 and _Stage_ntuple_.
+Even though the joint action of the two steps, an intermediate file is produced by _Stage1_, which will be saved in the ouptut directory (_OUTDIR_) with a recognizable name. 
+The stage1
 
 ### Stage1
 
