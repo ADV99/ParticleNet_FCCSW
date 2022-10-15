@@ -108,7 +108,11 @@ rv::RVec<FCCAnalysesJetConstituents> build_constituents_cluster(const rv::RVec<e
     }	
 ```
 IMPORTANT: this function associates properly jet-constituents because the labels are set to the particles following the order of the particles as they present in the initial entry; so the index coincides with the particle position in the input branch.
+
+The goodness of the association particles-jets was proven by plotting the histograms of the residuals $(P^\mu_{jet} - \sum{P^{\mu}_{\constituents}})/P^\mu_{jet}$ with $P^\mu = (E, \vec{p})$. Actually the residuals were computed on other 4 quantities which are in one to one relation with 4-momenta: $E, p_t, \phi, \theta$.
 	
+	PLOTS!!!
+
 The structure RVec::< RVec < type > > will be mantained also when computing the features of the constituents for this stage.
 Let's see an example of a function computing a feature of the constituents of the jets in one event (the same structure is mantained for other functions):
 ```
@@ -130,6 +134,9 @@ rv::RVec<FCCAnalysesJetConstituentsData> get_erel_log_cluster(const rv::RVec<fas
 ```
 Notice: the functions are written considering one event, then the processing of all the events in the tree is performed by `fccanalysis run` command (see `produceTrainingTrees_mp.py`).
 
+The computed features were also validated by comparing them with the ones obtained in a previous study by Michele Selvaggi and Loukas Gouskos (samples spring2021). We obtained the following plots.
+	
+	PLOTS!!!
 
 At the end of this stage we have a tree in which each entry is an event; the features of the jets are saved as `RVec < float > ` and the features of the constituents of the jets are saved as `RVec < RVec < float > >` ; the return type is actually a pointer to these structures. We still need to rearrange the structure from a per-event tree of pointers to RVec to a per-jet tree of arrays (an ntuple).
 
