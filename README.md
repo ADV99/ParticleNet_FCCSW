@@ -9,4 +9,4 @@ We can identify in the complete process of training ParticleNet four main stages
 Here skip the first step, assuming the samples have already been generated and are available.
 The second step is performed and explained inside `FCCAnalyses/` . 
 
-We observe that the codes presented here will be subject to variations as our work goes on.
+We observe that the codes presented here will be subject to developments as our work continues.
