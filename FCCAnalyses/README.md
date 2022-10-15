@@ -159,8 +159,9 @@ Now, let's go through the code and see how to read the _Stage1_ tree; in particu
 
 As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
 
+
+* Setting variables for reading
 ```
-//setting variables for reading
 int nJets;
 int nconst = 0; //number of constituents of the jets
 ROOT::VecOps::RVec<float> *Jets_e=0;
@@ -176,15 +177,17 @@ int nconst = 0;
 	
 double recojet_e;
 float pfcand_e[1000] = {0.};
-
-//setting variables for looping
+```
+* Setting variables for looping
 int N_i = atoi(argv[3]);
 int N_f = atoi(argv[4]);
 int Nevents_Max = N_f - N_i;  // maximum number of events to be saved
 
 int nentries = ev->GetEntries(); //total number of events in the file
-
-for(int i = N_i+1; i < nentries; ++i) {
+```
+* Loop
+```	
+for(int i = N_i+1; i < nentries; ++i) { // Loop over the events 
 	ev->GetEntry(i);
     	njet = nJets;
 
@@ -197,17 +200,18 @@ for(int i = N_i+1; i < nentries; ++i) {
       		}
     	}
     
-    	if (njet < 2) { //exclude the events with less than two jets
+    	if (njet < 2) {   //exclude the events with less than two jets
       		continue ;
     	}
-	for(int j=0; j < 2; ++j) { //we only take the first two jets (the ones having more ENERGY, they're ordered in stage1); the third not expected: leak in clustering
+		     
+	for(int j=0; j < 2; ++j) {   //Loop over the jets inside the i-th event
+	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1); the third not expected: leak in clustering
 	
 		recojet_e = (*Jets_e)[j];
 		nconst = (count_Const->at(j));
 	
-		for(int k = 0; k < nconst; ++k){
+		for(int k = 0; k < nconst; ++k){ //Loop over the constituents of the j-th jet in the i-th event
 			pfcand_e[k] = (JetsConstituents_e->at(j))[k];
-					  
 		}
 	ntuple->Fill();	
 	}
