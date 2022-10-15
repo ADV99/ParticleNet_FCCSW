@@ -75,9 +75,16 @@ The jet clustering is performed using the 4-momenta of the reconstructed particl
 ```
 ...
 ``` 
-and that are now used to associate the particles to the belonging jet. 
-
-  - association with constituents (build constituents + labels)
+and that are now used to associate the particles to the belonging jet. In fact, by calling
+```
+.Define("JetsConstituents", "JetConstituentsUtils::build_constituents_cluster(ReconstructedParticles, jetconstituents_ee_genkt)") #build jet constituents
+```
+we create an RVec::< RVec <ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet. This structure RVec::< RVec < type > > will be mantained also when computing the features of the constituents for this stage.
+Let's see an example of a function computing a feature of the constituents of the jets in one event.
+ 
+Notice: the functions are written considering one event, then the processing of all the events in the tree is performed by `fccanalysis run` command (see `produceTrainingTrees_mp.py`).
+At the end of this stage
+            
   - treatment of constituents (vectors of vectors of RecPartData)
   - Validation of clustering : Plots of residuals
 
