@@ -37,10 +37,9 @@ For what concerns memory usage:
 In our case the directory containing the intermediate and final files weights $\sim 50$ Gb .
 We notice that the intermediate files could be deleted after the production of the final ntuples.
 
-In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
-
-All the namespaces used are defined and developed inside the folder `analyzers`.
 ### Stage1 : `analysis_constituents_stage1_cluster.py`
+All the namespaces used are defined and developed inside the folder `analyzers`.
+
 As said, in this stage basically the initial edm4hep files are read and the interesting features are computed. Furthermore, in our version, the clustering is done explicitly. 
 In the initial tree each entry corresponds to an event.
 * runs with the support of analyzers, in particular we developed JetConstituentsUtils and ReconstructedParticle2Track
@@ -294,13 +293,16 @@ loop : events {
 Along the code there are counters of anomalies; these and other information are printed to stdoout.
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
-Here we describe briefly what this code is doing.
-This app is aimed to run the two stages jointly in an automatized and optimized way using multiprocessing. 
-The _Stage1_ is sent in parallel by fccanalyses, while _Stage_ntuple_ needs to be parallelized.
-The _Stage_ntuple_ is run twice, once to create the training dataset and once for the test dataset; the splitting fraction train/test is passed as an argument.
+This app is aimed to run the two stages jointly in an automatized and optimized way using multiprocessing.The _Stage1_ is sent in parallel by fccanalyses, while _Stage_ntuple_ needs to be parallelized.
+Few parameters are set:
+* path to initial samples,
+* path the output directory (will store the output files of the two stages),
+* train/test splitting fraction (the _Stage_ntuple_ is run twice, once to create the training dataset and once for the test dataset).
 The code creates a subdirectory inside the indicated output directory, named as `user_date`. 
 Inside this subdirectory the output files of _Stage1_ and _Stage_ntuple_ are created. 
 Furthermore, for each class two `.txt` files are created and `stdout` and `stderr` of the programs are redirected there. 
+
+In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
 
 > Still work in progress ...
 
