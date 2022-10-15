@@ -6,7 +6,7 @@ We can identify in the complete process of training ParticleNet four main stages
 3. training;
 4. evaluation.
 
-Here skip the first step, assuming the samples have already been generated and are available.
+Here we skip the first step, assuming the samples have already been generated and are available.
 The second step is performed and explained inside `FCCAnalyses/` . 
 
 We observe that the codes presented here will be subject to developements as our work continues.
