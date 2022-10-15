@@ -52,10 +52,11 @@ In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each
 Notice: independently of the process which generated it
 
 ## How to run this example
-
-# Evaluation
  
 
-# What could be improved
+## What could be improved
 * the stage 1 doesn't reduce the statistics if needed, only in stage_ntuple this is done; this implies heavier intermediate files and longer times even when I want to consider small fractions of the initial samples. Stage_ntuple runs only on the required statistics.
-*  ... ```...```
+* ```...```
+
+
+# Evaluation
