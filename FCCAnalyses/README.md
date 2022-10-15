@@ -159,6 +159,41 @@ Now, let's go through the code and see how to read the _Stage1_ tree; in particu
 
 As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
 
+* Setting the flags
+```
+std::string infileName(argv[1]);
+char flavour = infileName[infileName.length()-6];
+
+float is_q = 0.;
+float is_b = 0.;
+float is_c = 0.;
+float is_s = 0.;
+float is_g = 0.;
+
+if (flavour == 'q') {is_q = 1.;}
+if (flavour == 'b') {is_b = 1.;}
+if (flavour == 'c') {is_c = 1.;}
+if (flavour == 's') {is_s = 1.;}
+if (flavour == 'g') {is_g = 1.;}
+if (flavour == 't') {is_t = 1.;}
+
+ntuple->Branch("pfcand_isMu", pfcand_isMu, "pfcand_isMu[nconst]/F");
+ntuple->Branch("pfcand_isEl", pfcand_isEl, "pfcand_isEl[nconst]/F");
+ntuple->Branch("pfcand_isChargedHad", pfcand_isChargedHad, "pfcand_isChargedHad[nconst]/F");
+ntuple->Branch("pfcand_isGamma", pfcand_isGamma, "pfcand_isGamma[nconst]/F");
+ntuple->Branch("pfcand_isNeutralHad", pfcand_isNeutralHad, "pfcand_isNeutralHad[nconst]/F");
+
+loop : events {
+	...
+	loop: jets {
+		...
+		loop: constituents {
+			...
+		}
+	ntuple.Fill() 
+	}
+}	
+```
 
 * Setting variables for reading
 ```
@@ -178,14 +213,19 @@ int nconst = 0;
 double recojet_e;
 float pfcand_e[1000] = {0.};
 ```
+
 * Setting variables for looping
+
+```
 int N_i = atoi(argv[3]);
 int N_f = atoi(argv[4]);
 int Nevents_Max = N_f - N_i;  // maximum number of events to be saved
 
 int nentries = ev->GetEntries(); //total number of events in the file
 ```
+	
 * Loop
+
 ```	
 for(int i = N_i+1; i < nentries; ++i) { // Loop over the events 
 	ev->GetEntry(i);
