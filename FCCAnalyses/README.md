@@ -87,24 +87,41 @@ std::vector<fastjet::PseudoJet> JetClusteringUtils::set_pseudoJets(ROOT::VecOps:
   return result;
 }
 ``` 
-and that are now used to associate the particles to the belonging jet. In fact, by calling
+and that are now used to associate the particles to the belonging jet (notice that the labels are set following the order of the particles as they present in the input event). In fact, by calling
 ```
 .Define("JetsConstituents", "JetConstituentsUtils::build_constituents_cluster(ReconstructedParticles, jetconstituents_ee_genkt)") #build jet constituents
 ```
-we create an RVec::< RVec <ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet. This structure RVec::< RVec < type > > will be mantained also when computing the features of the constituents for this stage.
-Let's see an example of a function computing a feature of the constituents of the jets in one event.
- 
+we create an RVec::< RVec <ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet. 
+The structure RVec::< RVec < type > > will be mantained also when computing the features of the constituents for this stage.
+Let's see an example of a function computing a feature of the constituents of the jets in one event (the same structure is mantained for other functions):
+```
+rv::RVec<FCCAnalysesJetConstituentsData> get_erel_log_cluster(const rv::RVec<fastjet::PseudoJet>& jets,
+								  const rv::RVec<FCCAnalysesJetConstituents>& jcs) {
+      rv::RVec<FCCAnalysesJetConstituentsData> out;
+      for (size_t i = 0; i < jets.size(); ++i) {                //first index (i) running over the jets in the event
+        auto& jet_csts = out.emplace_back();
+        float e_jet = jets.at(i).E();
+        auto csts = get_jet_constituents(jcs, i);
+        for (const auto& jc : csts) {                           //second index (j) running over the constituents of the i-th jet     
+          float val = (e_jet > 0.) ? jc.energy / e_jet : 1.;
+          float erel_log = float(std::log10(val));
+          jet_csts.emplace_back(erel_log);
+        }
+      }
+      return out;
+    }
+```
 Notice: the functions are written considering one event, then the processing of all the events in the tree is performed by `fccanalysis run` command (see `produceTrainingTrees_mp.py`).
 
-At the end of this stage
-            
-  - treatment of constituents (vectors of vectors of RecPartData)
-  - Validation of clustering : Plots of residuals
 
+At the end of this stage we have a tree in which each entry is an event; the features of the jets are saved as `RVec < float > ` and the features of the constituents of the jets are saved as `RVec < RVec < float > >` ; the return type is actually a pointer to these structures. We still need to rearrange the structure from a per-event tree of pointers to RVec to a per-jet tree of arrays (an ntuple).
+
+	
+* treatment of constituents (vectors of vectors of RecPartData)
+* Validation of clustering : Plots of residuals
 * computation of features: 
   - show good example
   - Validation (Michele comparison)
-
 * output : pointer!!! to vector of vectors of floats (first index -> jet, second index -> constituents of the ith jet)
 
 
