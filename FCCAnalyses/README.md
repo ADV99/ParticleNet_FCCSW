@@ -155,9 +155,88 @@ The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a p
 4. N_f : index of the event ehrtr to stop reading the tree .
 
 Our choices are implemented in the app `produceTrainingTrees_mp.py`, so will be explained in the next section.
-Now, let's go through the code and see how to read the _Stage1_ tree; in particular we see how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays.
+Now, let's go through the code.
 
-As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
+* Structure of the Loop.
+```
+loop : events {
+	...
+	loop : jets {
+		...
+		loop : constituents {
+			...
+		}
+	ntuple.Fill()  
+	}
+}
+```
+The position of ntuple.Fill() inside the loop structure determines the per-jet structure.
+
+* How to read the _Stage1_ tree; in particular, how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays. As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
+
+Setting variables for reading:
+```
+int nJets;
+int nconst = 0; //number of constituents of the jets
+ROOT::VecOps::RVec<float> *Jets_e=0;
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > *JetsConstituents_e = 0;
+
+ev->SetBranchAddress("njet", &nJets);	
+ev->SetBranchAddress("Jets_e", &Jets_e);
+ntuple->Branch("nconst", &nconst, "nconst/I");
+ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);	
+
+int njet = 0;
+int nconst = 0;
+	
+double recojet_e;
+float pfcand_e[1000] = {0.};
+```
+Setting variables for looping
+
+```
+int N_i = atoi(argv[3]);
+int N_f = atoi(argv[4]);
+int Nevents_Max = N_f - N_i;  // maximum number of events to be saved
+
+int nentries = ev->GetEntries(); //total number of events in the file
+```
+Loop
+```
+for(int i = N_i+1; i < nentries; ++i) { // Loop over the events 
+	ev->GetEntry(i);
+    	njet = nJets;
+
+    	if(njet != 2) {
+        	anomaly_njets_counts += 1;
+       		if (njet > 2) {
+			anomaly_njets_counts_more += 1;
+    		} else {
+			anomaly_njets_counts_less += 1;
+      		}
+    	}
+    
+    	if (njet < 2) {   //exclude the events with less than two jets
+      		continue ;
+    	}
+		     
+	for(int j=0; j < 2; ++j) {   //Loop over the jets inside the i-th event
+	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1); the third not expected: leak in clustering
+	
+		recojet_e = (*Jets_e)[j];
+		nconst = (count_Const->at(j));
+	
+		for(int k = 0; k < nconst; ++k){ //Loop over the constituents of the j-th jet in the i-th event
+			pfcand_e[k] = (JetsConstituents_e->at(j))[k];
+		}
+	ntuple->Fill();	
+	}
+	saved_events_counts += 1; //we count the num of events saved
+	if (saved_events_counts == Nevents_Max) { //interrupt the loop if Nevents_max events have already been saved
+		break;
+	}
+}
+```
 
 * Setting the flags
 ```
@@ -195,79 +274,11 @@ loop : events {
 }	
 ```
 
-* Setting variables for reading
-```
-int nJets;
-int nconst = 0; //number of constituents of the jets
-ROOT::VecOps::RVec<float> *Jets_e=0;
-ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > *JetsConstituents_e = 0;
-
-ev->SetBranchAddress("njet", &nJets);	
-ev->SetBranchAddress("Jets_e", &Jets_e);
-ntuple->Branch("nconst", &nconst, "nconst/I");
-ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);	
-
-int njet = 0;
-int nconst = 0;
-	
-double recojet_e;
-float pfcand_e[1000] = {0.};
-```
-
-* Setting variables for looping
-
-```
-int N_i = atoi(argv[3]);
-int N_f = atoi(argv[4]);
-int Nevents_Max = N_f - N_i;  // maximum number of events to be saved
-
-int nentries = ev->GetEntries(); //total number of events in the file
-```
-	
-* Loop
-
-```	
-for(int i = N_i+1; i < nentries; ++i) { // Loop over the events 
-	ev->GetEntry(i);
-    	njet = nJets;
-
-    	if(njet != 2) {
-        	anomaly_njets_counts += 1;
-       		if (njet > 2) {
-			anomaly_njets_counts_more += 1;
-    		} else {
-			anomaly_njets_counts_less += 1;
-      		}
-    	}
-    
-    	if (njet < 2) {   //exclude the events with less than two jets
-      		continue ;
-    	}
-		     
-	for(int j=0; j < 2; ++j) {   //Loop over the jets inside the i-th event
-	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1); the third not expected: leak in clustering
-	
-		recojet_e = (*Jets_e)[j];
-		nconst = (count_Const->at(j));
-	
-		for(int k = 0; k < nconst; ++k){ //Loop over the constituents of the j-th jet in the i-th event
-			pfcand_e[k] = (JetsConstituents_e->at(j))[k];
-		}
-	ntuple->Fill();	
-	}
-	saved_events_counts += 1; //we count the num of events saved
-	if (saved_events_counts == Nevents_Max) { //interrupt the loop if Nevents_max events have already been saved
-		break;
-	}
-}
-```
-
 	
 * how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
 * read jets overall properties
 * create arrays example (for constituents) + floats (for jet overall properties)
 * usage of jet N_i, N_f + stopping when required + cases (see ipad)
-* loops events - jet - constituents
 * printing the strange cases
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
