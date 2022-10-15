@@ -143,6 +143,8 @@ At the end of this stage we have a tree in which each entry is an event; the fea
 #### What if implicit clustering ?
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
+In this stage we rearrange the tree to a per-jet format, checking the number of events actually considered is the wanted one. 
+Something important also happens: from the clustering happening 
 * 4 arguments: inpath (path/infilename) outpath N_i N_f
 * how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
 * read jets overall properties
@@ -169,3 +171,4 @@ Notice: independently of the process which generated it
 
 
 # Evaluation
+```...```
