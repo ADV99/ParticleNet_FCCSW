@@ -89,8 +89,8 @@ if __name__ == '__main__':
         proc.join()
 
     for i in range(len(list_stdout)):
-        f_stdout[i].close()
-        f_stderr[i].close()
+        list_stdout[i].close()
+        list_stderr[i].close()
    
     
 #1) How to improve?
