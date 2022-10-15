@@ -294,18 +294,44 @@ loop : events {
 Along the code there are counters of anomalies; these and other information are printed to stdoout.
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
+Here we describe briefly what this code is doing.
+This app is aimed to run the two stages jointly in an automatized and optimized way using multiprocessing. 
+The _Stage1_ is sent in parallel by fccanalyses, while _Stage_ntuple_ needs to be parallelized.
+The _Stage_ntuple_ is run twice, once to create the training dataset and once for the test dataset; the splitting fraction train/test is passed as an argument.
+The code creates a subdirectory inside the indicated output directory, named as `user_date`. 
+Inside this subdirectory the output files of _Stage1_ and _Stage_ntuple_ are created. 
+Furthermore, for each class two `.txt` files are created and `stdout` and `stderr` of the programs are redirected there. 
 
-* explain what it is doing
-* explain the multiprocessing choice
-
-* the _Stage_ntuple_ is run twice, once to create the training dataset and once for the test dataset; the splitting fraction train/test is passed as an argument ()
+> Still work in progress ...
 
 
-
-Notice: independently of the process which generated it
+> Notice for me: "independently of the process which generated it"
 
 ## How to run this example
- 
+### Way 1
+1. Clone this repository
+2. Set up the environment
+```
+cd FCCAnalyses/
+source ./setup.sh
+mkdir build install
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=../install
+make install
+cd ..
+```
+3. Set your `outDir` inside `produceTrainingTrees_mp.py`:
+```
+outDIR = "/eos/home-a/adelvecc/try_script_mp/"
+```
+4. Run `produceTrainingTrees_mp.py`
+
+### Way 2
+1. Copy the files `analysis_constituents_stage1_cluster.py`, `MakeNtuple_constituents2.cpp` and `produceTrainingTrees_mp.py` inside your FCCAnalyses directory.
+2. Update the file `JetConstituentsUtils` in both `analyzers/dataframe/src/` and `analyzers/dataframe/FCCAnalyses/`
+3. Set your `outDir` inside `produceTrainingTrees_mp.py`
+4. Run `python produceTrainingTrees_mp.py`
+
 
 ## What could be improved
 * the stage 1 doesn't reduce the statistics if needed, only in stage_ntuple this is done; this implies heavier intermediate files and longer times even when I want to consider small fractions of the initial samples. Stage_ntuple runs only on the required statistics.
