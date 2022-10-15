@@ -39,12 +39,13 @@ We notice that the intermediate files could be deleted after the production of t
 
 In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
 
+All the namespaces used are defined and developed inside the folder `analyzers`.
 ### Stage1 : `analysis_constituents_stage1_cluster.py`
 As said, in this stage basically the initial edm4hep files are read and the interesting features are computed. Furthermore, in our version, the clustering is done explicitly. 
 In the initial tree each entry corresponds to an event.
 * runs with the support of analyzers, in particular we developed JetConstituentsUtils and ReconstructedParticle2Track
 Let's go through the code.
-* explicit clustering. The clustering is done explicitly by the following lines:
+1. explicit clustering. The clustering is done explicitly by the following lines:
 ```
             #===== CLUSTERING
 
@@ -65,13 +66,19 @@ Let's go through the code.
             #get the jets constituents out of the struct
             .Define("jetconstituents_ee_genkt","JetClusteringUtils::get_constituents(FCCAnalysesJets_ee_genkt)")
 ```
-In the initial tree, all the particles measured are saved in the branch _ReconstructedParticles_ in a `ROOT::VecOps::RVec<ReconstructedParticleData>`.
-The line `.Define("RP_px",          "ReconstructedParticle::get_px(ReconstructedParticles)")` takes this branch for all events, and for each particle computes px; the output of this function is a branch called _RP_px_ containing an `RVec<float>` per each event. The namespace `ReconstructedParticle` is defined in the file `analyzers/dataframe/src/ReconstructedParticle.cc`.
+In the initial tree, all the particles measured in one event are saved in one entry of the branch _ReconstructedParticles_ in a                                                                 `ROOT::VecOps::RVec<ReconstructedParticleData>`.
+The line `.Define("RP_px",          "ReconstructedParticle::get_px(ReconstructedParticles)")` takes this branch and for all entries computes px of each particle; the output of this call is a branch called _RP_px_ containing an `RVec<float>` per each event.
+
+The jet clustering is performed using the 4-momenta of the reconstructed particles. This operation returns two outputs: 
+  - `jets_ee_genkt` : RVec<fastjet::Pseudojet> , `Pseudojet` methods and attributes allow to access the overall jet properties;
+  - `jetconstituents_ee_genkt` : RVec< RVec<int> > , i.e.
+The fi
   - labeling 
   - output format fastjet
   - association with constituents (build constituents + labels)
   - treatment of constituents (vectors of vectors of RecPartData)
   - Validation of clustering : Plots of residuals
+
 * computation of features: 
   - show good example
   - Validation (Michele comparison)
