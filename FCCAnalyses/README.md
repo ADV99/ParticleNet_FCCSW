@@ -144,6 +144,7 @@ At the end of this stage we have a tree in which each entry is an event; the fea
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
 The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a per-jet format, but other tasks are accomplished:
+* setting the flags of the class which the jets belong to;
 * checking the number of events actually considered is the wanted one;
 * there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and a \sim few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
 	
@@ -156,14 +157,65 @@ The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a p
 Our choices are implemented in the app `produceTrainingTrees_mp.py`, so will be explained in the next section.
 Now, let's go through the code and see how to read the _Stage1_ tree; in particular we see how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays.
 
-As an example, we take one jet feature (`RVec < float>`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
-Reading
+As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
+
 ```
-...
-```
-Copying
-```
-...	
+//setting variables for reading
+int nJets;
+int nconst = 0; //number of constituents of the jets
+ROOT::VecOps::RVec<float> *Jets_e=0;
+ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > *JetsConstituents_e = 0;
+
+ev->SetBranchAddress("njet", &nJets);	
+ev->SetBranchAddress("Jets_e", &Jets_e);
+ntuple->Branch("nconst", &nconst, "nconst/I");
+ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);	
+
+int njet = 0;
+int nconst = 0;
+	
+double recojet_e;
+float pfcand_e[1000] = {0.};
+
+//setting variables for looping
+int N_i = atoi(argv[3]);
+int N_f = atoi(argv[4]);
+int Nevents_Max = N_f - N_i;  // maximum number of events to be saved
+
+int nentries = ev->GetEntries(); //total number of events in the file
+
+for(int i = N_i+1; i < nentries; ++i) {
+	ev->GetEntry(i);
+    	njet = nJets;
+
+    	if(njet != 2) {
+        	anomaly_njets_counts += 1;
+       		if (njet > 2) {
+			anomaly_njets_counts_more += 1;
+    		} else {
+			anomaly_njets_counts_less += 1;
+      		}
+    	}
+    
+    	if (njet < 2) { //exclude the events with less than two jets
+      		continue ;
+    	}
+	for(int j=0; j < 2; ++j) { //we only take the first two jets (the ones having more ENERGY, they're ordered in stage1); the third not expected: leak in clustering
+	
+		recojet_e = (*Jets_e)[j];
+		nconst = (count_Const->at(j));
+	
+		for(int k = 0; k < nconst; ++k){
+			pfcand_e[k] = (JetsConstituents_e->at(j))[k];
+					  
+		}
+	ntuple->Fill();	
+	}
+	saved_events_counts += 1; //we count the num of events saved
+	if (saved_events_counts == Nevents_Max) { //interrupt the loop if Nevents_max events have already been saved
+		break;
+	}
+}
 ```
 
 	
