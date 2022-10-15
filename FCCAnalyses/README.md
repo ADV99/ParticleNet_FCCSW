@@ -220,11 +220,11 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
 	
 	
 ###### Translating
-How to read the _Stage1_ tree; in particular, how to read `RVec < RVec < float> > *` stored in a per-event tree and translate them to jet tree of arrays. As an example, we take one jet feature (`RVec < float> *`) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
+As an example, we take one jet feature (stored as `RVec < float> *` in the per-event tree) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
 
 Setting variables for reading: 
 ```
-int nJets;
+int nJets; //number of jets in the event
 int nconst = 0; //number of constituents of the jets
 ROOT::VecOps::RVec<float> *Jets_e=0;
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > *JetsConstituents_e = 0;
