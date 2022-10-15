@@ -1,11 +1,10 @@
 # Intro: Training ParticleNet in FCCSW
 The contents of this repository aim to furnish an example of how to set the training of ParticleNet inside the FCCSW framework.
-
-The implementation of the training chain of ParticleNet jet tagger inside FCCSW framework is presented here. 
-The training chain consists of 5 stages:
+We can identify in the complete process of training ParticleNet four main stages:
 1. generation of events;
-2. reading of the samples and preparation of dataset for training;
+2. preparation of dataset;
 3. training;
 4. evaluation.
 
 Here skip the first step, assuming the samples have already been generated and are available.
+The second step is performed and explained inside `FCCAnalyses/` . 
