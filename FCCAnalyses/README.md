@@ -65,7 +65,8 @@ Alternative: implicit clustering (needs to be validated)
 * printing the strange cases
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
-
+* explain what it is doing
+* explain the multiprocessing choice
 
 
 
