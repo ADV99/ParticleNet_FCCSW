@@ -50,12 +50,19 @@ In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each
   - show good example
   - Validation (Michele comparison)
 
+* output : pointer!!! to vector of vectors of floats (first index -> jet, second index -> constituents of the ith jet)
 
 
 Alternative: implicit clustering (needs to be validated)
 
 ### Stage_ntuple : `MakeNtuple_constituents2.cpp`
-
+* 4 arguments: inpath (path/infilename) outpath N_i N_f
+* how to read a per event tree of vector of vectors of floats and translate to per jet tree of arrays (code) (EXAMPLE with code)
+* read jets overall properties
+* create arrays example (for constituents) + floats (for jet overall properties)
+* usage of jet N_i, N_f + stopping when required + cases (see ipad)
+* loops events - jet - constituents
+* printing the strange cases
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
 
