@@ -70,11 +70,13 @@ In the initial tree, all the particles measured in one event are saved in one en
 The line `.Define("RP_px",          "ReconstructedParticle::get_px(ReconstructedParticles)")` takes this branch and for all entries computes px of each particle; the output of this call is a branch called _RP_px_ containing an `RVec<float>` per each event.
 
 The jet clustering is performed using the 4-momenta of the reconstructed particles. This operation returns two outputs: 
-  - `jets_ee_genkt` : RVec<fastjet::Pseudojet> , `Pseudojet` methods and attributes allow to access the overall jet properties;
-  - `jetconstituents_ee_genkt` : RVec< RVec<int> > , i.e.
-The fi
-  - labeling 
-  - output format fastjet
+  - `jets_ee_genkt` : RVec< fastjet::Pseudojet > , `Pseudojet` methods and attributes allow to access the overall jet properties;
+  - `jetconstituents_ee_genkt` : RVec< RVec < int > > , which is a vector of vectors of integer labels which were assigned to the particles during the clustering by the function `...` : 
+```
+...
+``` 
+and that are now used to associate the particles to the belonging jet. 
+
   - association with constituents (build constituents + labels)
   - treatment of constituents (vectors of vectors of RecPartData)
   - Validation of clustering : Plots of residuals
