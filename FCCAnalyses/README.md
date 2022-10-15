@@ -36,7 +36,7 @@ For what concerns memory usage:
 In our case the directory containing the intermediate and final files weights $\sim 50$ Gb .
 We notice that the intermediate files could be deleted after the production of the final ntuples.
 
-In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class 5Millione
+In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
 
 ### Stage1
 
