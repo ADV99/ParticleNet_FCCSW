@@ -295,7 +295,18 @@ loop : events {
 Along the code there are counters of anomalies; these and other information are printed to stdoout.
 
 ### Joint run of Stage1 and Stage_ntuple : `produceTrainingTrees_mp.py`
-This app is aimed to run the two stages jointly in an automatized and optimized way using multiprocessing.The _Stage1_ is sent in parallel by fccanalyses, while _Stage_ntuple_ needs to be parallelized.
+This app is aimed to run the two stages jointly in an automatized and optimized way using multiprocessing. 
+The command to run `analysis_constituents_stage1_cluster.py` is of the form
+```
+...
+```
+It uses `fccanalyses`. The command to run `MakeNtuple.cpp` is of the form:
+```
+...
+```
+
+The _Stage1_ is sent in parallel by fccanalyses (the number of cores to use has to be set in `analysis_constituents_stage1_cluster.py` as the parameter `ncpus = `), while _Stage_ntuple_ needs to be parallelized.
+
 Few parameters are set:
 * path to initial samples,
 * path the output directory (will store the output files of the two stages),
