@@ -177,13 +177,13 @@ loop : events {
 
 The position of ntuple.Fill() inside the loop structure determines the per-jet structure.
 We modified this basic structure:
-* we insert where to start looping by N_i and how many events to consider by $Nevents_{Max} = N_f - N_i$;
-* we loop over the events from N_i to the end of the tree, but introduce an external counter $saved_events_counts$ which grows only if the event has been saved; this is the reliable counter! In fact, if the event is "strange" we don't save any jet, we skip to the next event. Let's study different cases:
-    - If $nentries - N_i < Nevents_{Max}$ $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed $saved_events_counts$; 
-    - If $nentries - N_i > Nevents_{Max}$ $\implies$ in the file there are exactly $Nevents_{Max}$; 
-    - If $nentries - N_i = Nevents_{Max}$ but there are strange events I will have less saved events, no error, but I know from stdout.
+* we insert where to start looping by `N_i` and how many events to consider by `Nevents_Max = N_f - N_i`;
+* we loop over the events from N_i to the end of the tree, but introduce an external counter `saved_events_counts` which grows only if the event has been saved; this is the reliable counter! In fact, if the event is "strange" we don't save any jet, we skip to the next event. The loop breaks when `saved_events_counts == Nevents_Max` if the loop has not reached the end of the input file. Let's study different cases:
+    - If `nentries - N_i < Nevents_Max` $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed the actual number of saved events; 
+    - If `nentries - N_i > Nevents_Max` $\implies$ in the file there are exactly $Nevents_{Max}$; 
+    - If `nentries - N_i = Nevents_Max` but there are strange events I will have less saved events, no error, but I know from stdout.
 
-Are considered "strange" events those in which the clustering returns njets < 2; in that case we skip the loop. If n >= 2 the loop is performed on the first two jets only (the ones having more ENERGY, they're ordered in stage1; the successives not expected: leak in clustering).
+Are considered "strange" events those in which the clustering returns `njets < 2`; in that case we skip the loop. If `njets >= 2` the loop is performed on the first two jets only (the ones having more ENERGY, they're ordered in stage1; the successives not expected: leak in clustering).
 
 ```
 int N_i = atoi(argv[3]); //where to start reading the tree
@@ -222,9 +222,9 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
 	
 ###### Translating
 As an example, we take one jet feature (stored as `RVec < float> *` in the per-event tree) and one constituent feature (`RVec < RVec < float> > *`) and follow them through the code.
-
-Setting variables for reading: 
+ 
 ```
+//Setting variables for reading
 int nJets; //number of jets in the event
 int nconst = 0; //number of constituents of the jets
 ROOT::VecOps::RVec<float> *Jets_e=0;
@@ -255,7 +255,7 @@ In the ntuple, a jet overall property will be just a `double`.
 Since we don't know a priori how many constituents the jet has, we initialize a constituent feature as an array with a number of elements larger than possible number of constituents, to be sure that we succeed in reading all of them from the input file (this array works as a temporary "home" before being sent to the output file); we initialize all the values to 0. When we create the branch of the ntuple (`ntuple->Branch("nconst", &nconst, "nconst/I")`), we pass as the size of the entry the actual number of constituents which has already been read into another branch (during the loop), in order not to save all the padding zeros contained in the local array.  
 	
 ###### Setting the flags
-We read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call .Fill the same value will be added to the branch.
+We read the name and take the character in the name corresponding to the class (in this case last letter before .root); we fix the flag in the beginning and never change it anymore; since it is pointing to the ntuple branch, everytime I call `ntuple.Fill()` the same value will be added to the branch.
 ```
 std::string infileName(argv[1]);
 char flavour = infileName[infileName.length()-6];
