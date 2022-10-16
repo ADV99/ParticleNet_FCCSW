@@ -55,8 +55,6 @@ Let's go through the code.
             .Define("RP_py",          "ReconstructedParticle::get_py(ReconstructedParticles)")
             .Define("RP_pz",          "ReconstructedParticle::get_pz(ReconstructedParticles)")
             .Define("RP_e",           "ReconstructedParticle::get_e(ReconstructedParticles)")
-            .Define("RP_m",           "ReconstructedParticle::get_mass(ReconstructedParticles)")
-            .Define("RP_q",           "ReconstructedParticle::get_charge(ReconstructedParticles)")
             
             #build pseudo jets with the RP
             .Define("pseudo_jets",    "JetClusteringUtils::set_pseudoJets(RP_px, RP_py, RP_pz, RP_e)")
