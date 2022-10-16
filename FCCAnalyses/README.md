@@ -148,7 +148,7 @@ At the end of this stage we have a tree in which each entry is an event; the fea
 The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a per-jet format, but other tasks are accomplished:
 * setting the flags of the class which the jets belong to;
 * checking the number of events actually considered is the wanted one;
-* there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and a \sim few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
+* there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and a $\sim$few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
 	
 `MakeNtuple_constituents2.cpp` takes 4 arguments: `USAGE: ./to_jetntuple [root_inFileName] [root_outFileName] N_i N_f`
 1. [root_inFileName] : path to input file in the form `path_to_stage1file/stage1_infilename` , 
