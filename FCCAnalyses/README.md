@@ -92,7 +92,7 @@ and that are now used to associate the particles to the belonging jet. In fact, 
 ```
 .Define("JetsConstituents", "JetConstituentsUtils::build_constituents_cluster(ReconstructedParticles, jetconstituents_ee_genkt)") #build jet constituents
 ```
-we create an RVec::< RVec <ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet :
+we create an RVec::< RVec < ReconstructedParticleData > > in which the first index _i_ runs over the jets identified in the event and the second _j_ over the particles belonging to the _i_-th jet :
 ```
 rv::RVec<FCCAnalysesJetConstituents> build_constituents_cluster(const rv::RVec<edm4hep::ReconstructedParticleData>& rps,
 								    const std::vector<std::vector<int>>& indices) {
