@@ -250,7 +250,8 @@ loop : i over events
 		nconst = (count_Const->at(j));
 	
 		loop : k over constituents
-			pfcand_e[k] = (JetsConstituents_e->at(j))[k]; //k-th element of the j-th vector pointed by JetsConstituents_e
+			pfcand_e[k] = (JetsConstituents_e->at(j))[k]; //k-th element of the j-th vector 
+								      //pointed by JetsConstituents_e
 ```
 
 In the ntuple, a jet overall property will be just a `double`.
