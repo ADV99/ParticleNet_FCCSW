@@ -232,16 +232,19 @@ int nconst = 0; //number of constituents of the jets
 ROOT::VecOps::RVec<float> *Jets_e=0;
 ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > *JetsConstituents_e = 0;
 
-ev->SetBranchAddress("njet", &nJets);	
+ev->SetBranchAddress("njet", &nJets);
+ev->SetBranchAddress("nconst", &count_Const);
 ev->SetBranchAddress("Jets_e", &Jets_e);
-ntuple->Branch("nconst", &nconst, "nconst/I");
 ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);	
 
 int njet = 0;
-int nconst = 0;
-	
+int nconst = 0;	
 double recojet_e; 
 float pfcand_e[1000] = {0.}; //here we initialize wit a large size for the
+
+ntuple->Branch("nconst", &nconst, "nconst/I");
+ntuple->Branch("recojet_e", &recojet_e);
+ntuple->Branch("pfcand_e", pfcand_e, "pfcand_e[nconst]/F");
 
 loop : i over events
 	loop : j over jets
