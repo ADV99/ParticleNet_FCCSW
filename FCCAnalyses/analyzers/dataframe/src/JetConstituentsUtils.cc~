@@ -499,9 +499,9 @@ namespace FCCAnalyses {
 	  //if(ct.at(j).tracks_begin > 0 && ct.at(j).tracks_begin < trackdata.size()) { //CHECK
 	  if (ct.at(j).tracks_begin < trackdata.size()) {
 	    if( abs(pids.at(j)) == 11) {
-	      tmp.push_back(0.51099895);
+	      tmp.push_back(0.00051099895);
 	    } else if (abs(pids.at(j)) == 13) {
-	      tmp.push_back(105.65837);
+	      tmp.push_back(0.10565837);
 	    } else {
 	      float Tin = trackerhits.at(trackdata.at(ct.at(j).tracks_begin).trackerHits_begin).time;
 	      float Tout = trackerhits.at(trackdata.at(ct.at(j).tracks_begin).trackerHits_end-1).time; //one track and two hits per recon. particle are assumed
