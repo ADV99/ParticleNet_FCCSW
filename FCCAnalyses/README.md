@@ -44,6 +44,7 @@ In particular, in JetConstituentsUtils we developed functions to compute the con
 As said, in this stage basically the initial edm4hep files are read and the interesting features are computed. Furthermore, in our version, the clustering is done explicitly. 
 
 In the initial tree each entry corresponds to an event.
+
 Let's go through the code.
 1. explicit clustering. The clustering is done explicitly by the following lines:
 ```
