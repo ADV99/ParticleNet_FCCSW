@@ -240,7 +240,7 @@ ev->SetBranchAddress("JetsConstituents_e", &JetsConstituents_e);
 int njet = 0;
 int nconst = 0;	
 double recojet_e; 
-float pfcand_e[1000] = {0.}; //here we initialize wit a large size for the
+float pfcand_e[1000] = {0.}; //here we initialize wit a large size
 
 ntuple->Branch("nconst", &nconst, "nconst/I");
 ntuple->Branch("recojet_e", &recojet_e);
