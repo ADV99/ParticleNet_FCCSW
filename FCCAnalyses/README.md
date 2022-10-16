@@ -148,7 +148,7 @@ At the end of this stage we have a tree in which each entry is an event; the fea
 The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a per-jet format, but other tasks are accomplished:
 * setting the flags of the class which the jets belong to;
 * checking the number of events actually considered is the wanted one;
-* there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and a $\sim$few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
+* there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and $\sim$ few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
 	
 `MakeNtuple_constituents2.cpp` takes 4 arguments: `USAGE: ./to_jetntuple [root_inFileName] [root_outFileName] N_i N_f`
 1. [root_inFileName] : path to input file in the form `path_to_stage1file/stage1_infilename` , 
@@ -177,12 +177,11 @@ loop : events {
 
 The position of ntuple.Fill() inside the loop structure determines the per-jet structure.
 We modified this basic structure:
-We insert where to start looping by N_i and how many events to consider by $Nevents_{Max} = N_f - N_i$;
-We loop over the events from N_i to the end of the tree, but introduce an external counter $saved_events_counts$ which grows only if the event has been saved; this is the reliable counter! In fact, if the event is "strange" we don't save any jet, we skip to the next event.
-Let's study different cases:
-If $nentries - N_i < Nevents_{Max}$ $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed $saved_events_counts$; 
-If $nentries - N_i > Nevents_{Max}$ $\implies$ in the file there are exactly $Nevents_{Max}$; 
-If $nentries - N_i = Nevents_{Max}$ but there are strange events I will have less saved events, no error, but I know from stdout.
+* we insert where to start looping by N_i and how many events to consider by $Nevents_{Max} = N_f - N_i$;
+* we loop over the events from N_i to the end of the tree, but introduce an external counter $saved_events_counts$ which grows only if the event has been saved; this is the reliable counter! In fact, if the event is "strange" we don't save any jet, we skip to the next event. Let's study different cases:
+    - If $nentries - N_i < Nevents_{Max}$ $\implies$ in the file there are less events than required; no error produced, but in stdout will be printed $saved_events_counts$; 
+    - If $nentries - N_i > Nevents_{Max}$ $\implies$ in the file there are exactly $Nevents_{Max}$; 
+    - If $nentries - N_i = Nevents_{Max}$ but there are strange events I will have less saved events, no error, but I know from stdout.
 
 Are considered "strange" events those in which the clustering returns njets < 2; in that case we skip the loop. If n >= 2 the loop is performed on the first two jets only (the ones having more ENERGY, they're ordered in stage1; the successives not expected: leak in clustering).
 
