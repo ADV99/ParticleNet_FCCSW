@@ -202,7 +202,8 @@ for(int i = N_i+1; i < nentries; ++i) { // Loop over the events
     	}
 		     
 	for(int j=0; j < 2; ++j) {   //Loop over the jets inside the i-th event
-	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1), the third not expected: leak in clustering
+	//we only take the first two jets (the ones having more ENERGY, they're ordered in stage1),
+	//the third not expected: leak in clustering
 	
 		...
 	
