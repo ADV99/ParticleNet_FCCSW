@@ -114,7 +114,7 @@ The goodness of the association particles-jets was proven by plotting the histog
 	
 	PLOTS!!!
 
-The structure RVec::< RVec < type > > will be mantained also when computing the features of the constituents for this stage.
+The structure RVec::< RVec < type > > is the key data structure for treating jets constituents in an event and will be mantained also when computing the features of the constituents for this stage.
 Let's see an example of a function computing a feature of the constituents of the jets in one event (the same structure is mantained for other functions):
 ```
 rv::RVec<FCCAnalysesJetConstituentsData> get_erel_log_cluster(const rv::RVec<fastjet::PseudoJet>& jets,
