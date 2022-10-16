@@ -319,9 +319,6 @@ In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each
 
 > Still work in progress ...
 
-
-> Notice for me: "independently of the process which generated it"
-
 ## How to run this example
 ### Way 1
 1. Clone this repository
@@ -350,8 +347,9 @@ outDIR = "/eos/home-a/adelvecc/try_script_mp/"
 
 ## What could be improved
 * the stage 1 doesn't reduce the statistics if needed, only in stage_ntuple this is done; this implies heavier intermediate files and longer times even when I want to consider small fractions of the initial samples. Stage_ntuple runs only on the required statistics.
+* beamspot treatment
+* "independently of the process which generated it"
 * ```...```
-
 
 # Evaluation
 ```...```
