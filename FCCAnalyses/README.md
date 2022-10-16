@@ -39,10 +39,11 @@ We notice that the intermediate files could be deleted after the production of t
 
 ### Stage1 : `analysis_constituents_stage1_cluster.py`
 All the namespaces used are defined and developed inside the folder `analyzers`.
+In particular, in JetConstituentsUtils we developed functions to compute the constituents features and modified ReconstructedParticle2Track in order to return the value $-9$ for particles (neutral) not having a track (the value was chosen arbitrarily, could be changed).
 
 As said, in this stage basically the initial edm4hep files are read and the interesting features are computed. Furthermore, in our version, the clustering is done explicitly. 
+
 In the initial tree each entry corresponds to an event.
-* runs with the support of analyzers, in particular we developed JetConstituentsUtils and ReconstructedParticle2Track
 Let's go through the code.
 1. explicit clustering. The clustering is done explicitly by the following lines:
 ```
