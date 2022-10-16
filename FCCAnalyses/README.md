@@ -119,13 +119,16 @@ rv::RVec<FCCAnalysesJetConstituentsData> get_erel_log_cluster(const rv::RVec<fas
 								  const rv::RVec<FCCAnalysesJetConstituents>& jcs) {
       rv::RVec<FCCAnalysesJetConstituentsData> out;
       for (size_t i = 0; i < jets.size(); ++i) {   // external loop: first index (i) running over the jets in the event
-        auto& jet_csts = out.emplace_back();      //in the ext. loop we fill the external vector with vectors (one per jet)
+        auto& jet_csts = out.emplace_back();      //in the ext. loop we fill the external vector with vectors 
+						  //(one per jet)
         float e_jet = jets.at(i).E();
         auto csts = get_jet_constituents(jcs, i);
-        for (const auto& jc : csts) {                           //second index (j) running over the constituents of the i-th jet     
+        for (const auto& jc : csts) {                         //second index (j) running over the constituents
+							      //of the i-th jet     
           float val = (e_jet > 0.) ? jc.energy / e_jet : 1.;
           float erel_log = float(std::log10(val));
-          jet_csts.emplace_back(erel_log);                    //in the int. loop we fill the internal vectors (jets) with constituents data
+          jet_csts.emplace_back(erel_log);                    //in the int. loop we fill the internal vectors (jets)
+	  						      //with constituents data
         }
       }
       return out;
