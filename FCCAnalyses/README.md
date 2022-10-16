@@ -150,7 +150,7 @@ The main goal of this stage is to rearrange the tree obtained in _Stage1_ to a p
 * checking the number of events actually considered is the wanted one;
 * there is a $\sim 30\%$ cases in which the clustering returns more than 2 jets, and $\sim$ few per million cases in which less than 2 jets are returned; so in the first case just the two higher energy jets are considered, while in the second case no jet is considered; a count of this events is printed to stdout.
 	
-`MakeNtuple_constituents2.cpp` takes 4 arguments: `USAGE: ./to_jetntuple [root_inFileName] [root_outFileName] N_i N_f`
+`MakeNtuple_constituents2.cpp` takes 4 arguments: `USAGE: ./MakeNtuple_constituents2 [root_inFileName] [root_outFileName] N_i N_f`
 1. [root_inFileName] : path to input file in the form `path_to_stage1file/stage1_infilename` , 
 2. [root_outFileName] : path to output file in the form `path_to_outputdir/outfilename` ,
 3. N_i : index of the event from where start reading the tree ,
@@ -298,11 +298,14 @@ Along the code there are counters of anomalies; these and other information are 
 This app is aimed to run the two stages jointly in an automatized and optimized way using multiprocessing. 
 The command to run `analysis_constituents_stage1_cluster.py` is of the form
 ```
-...
+fccanalysis run analysis_constituents_stage1_cluster.py --output PATH_to_OUTFILE/filename.root --files-list PATH_to_INFILE/filename1.root PATH_to_INFILE/filename2.root ... 
 ```
-It uses `fccanalyses`. The command to run `MakeNtuple.cpp` is of the form:
+IMPORTANT: This commands accepts wildcard `*` in input.
+
+The command to run `MakeNtuple_constituents2.cpp` is of the form:
 ```
-...
+g++ -o MakeNtuple_constituents MakeNtuple_constituents.cpp `root-config --cflags --libs` -Wall
+./MakeNtuple_constituents2 [root_inFileName] [root_outFileName] N_i N_f
 ```
 
 The _Stage1_ is sent in parallel by fccanalyses (the number of cores to use has to be set in `analysis_constituents_stage1_cluster.py` as the parameter `ncpus = `), while _Stage_ntuple_ needs to be parallelized.
@@ -315,12 +318,13 @@ The code creates a subdirectory inside the indicated output directory, named as 
 Inside this subdirectory the output files of _Stage1_ and _Stage_ntuple_ are created. 
 Furthermore, for each class two `.txt` files are created and `stdout` and `stderr` of the programs are redirected there. 
 
-In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used.
+In our study five classes are considered: $\{ q = (u,d), b, c, s, g\}$; for each class $10^6$ events were considered, and a $train/test$ split fraction of $9/1$ was used. The output directory of both stages is the same: we have one input directory which contains the initial samples and one output directory containing outputs of `Stage1`, `Stage_ntuple` ; the input directory of `Stage_ntuple` is the same as its output directory. 
 
 > Still work in progress ...
 
 ## How to run this example
 ### Way 1
+###### Set-up
 1. Clone this repository
 2. Set up the environment
 ```
@@ -332,11 +336,14 @@ cmake .. -DCMAKE_INSTALL_PREFIX=../install
 make install
 cd ..
 ```
-3. Set your `outDir` inside `produceTrainingTrees_mp.py`:
+###### Run
+3. `cd ParticleNet_FCCSW/FCCAnalyses/` 
+4. Set your `outDir` inside `produceTrainingTrees_mp.py`:
 ```
 outDIR = "/eos/home-a/adelvecc/try_script_mp/"
 ```
-4. Run `produceTrainingTrees_mp.py`
+4. `source setup.sh`
+5. `python produceTrainingTrees_mp.py`
 
 ### Way 2
 1. Copy the files `analysis_constituents_stage1_cluster.py`, `MakeNtuple_constituents2.cpp` and `produceTrainingTrees_mp.py` inside your FCCAnalyses directory.
