@@ -12,16 +12,11 @@ processList = {
 #prodTag     = "FCCee/spring2021/IDEA/" #for spring2022 samples
 prodTag     = "FCCee/pre_fall2022_training/IDEA/" #for prefall2022 samples
 
-#for samples generated locally during summer 2022 
-#outputDir   = "/eos/home-a/adelvecc/FCCAnalyses/stage1/samples220824/" #for training chain
-
-#for prefall2022 samples
-#outputDir   = "/eos/home-a/adelvecc/FCCAnalyses/stage1/samples220909_cluster/set_pseudoJets_xyzm/" #for set_pseudoJets_xyzm
-#outputDir   = "/eos/home-a/adelvecc/FCCAnalyses/stage1/samples220909_cluster/set_pseudoJets/" #for set_pseudoJets
+#outputDir   = ""
 
 #Optional: ncpus, default is 4                       
 nCPUS       = 8
-#testFile="/eos/home-a/adelvecc/Delphes_samples/samples220815/p8_ee_ZH_ecm240_edm4hep_vvss.root"
+
 
 class RDFanalysis():
 
@@ -44,8 +39,7 @@ class RDFanalysis():
             .Define("RP_m",           "ReconstructedParticle::get_mass(ReconstructedParticles)")
             .Define("RP_q",           "ReconstructedParticle::get_charge(ReconstructedParticles)")
             
-            #build pseudo jets with the RP, using the interface that takes px,py,pz,m for better
-            #handling of rounding error
+            #build pseudo jets with the RP, using the interface that takes px,py,pz,E
             #.Define("pseudo_jets",    "JetClusteringUtils::set_pseudoJets_xyzm(RP_px, RP_py, RP_pz, RP_m)")
             .Define("pseudo_jets",    "JetClusteringUtils::set_pseudoJets(RP_px, RP_py, RP_pz, RP_e)")
             #run jet clustering with all reconstructed particles. ee_genkt_algorithm, R=1.5, inclusive clustering, E-scheme
