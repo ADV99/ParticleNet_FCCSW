@@ -4,6 +4,326 @@ namespace FCCAnalyses{
 
 namespace ReconstructedParticle2Track{
 
+  ROOT::VecOps::RVec<float> getRP2TRK_Bz(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& rps, const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
+    const double c_light = 2.99792458e8;
+    const double a = c_light * 1e3 * 1e-15; //[omega] = 1/mm
+    ROOT::VecOps::RVec<float> out;
+    
+    for(auto & p: rps) {
+      if(p.tracks_begin < tracks.size()) {
+	double pt= sqrt(p.momentum.x * p.momentum.x + p.momentum.y * p.momentum.y);
+	double Bz= tracks.at(p.tracks_begin).omega / a * pt * std::copysign(1.0, p.charge);
+	out.push_back(Bz);
+      } else {
+	out.push_back(-9.);
+      }
+    }
+    return out;
+  }
+
+  float Bz(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& rps, const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
+    const double c_light =  2.99792458e8;// speed of light m/sec;
+    const double a = c_light * 1e3 * 1e-15; //[omega] = 1/mm 
+    
+    double Bz = -9;
+
+    for(auto & p: rps) {
+      if(p.tracks_begin < tracks.size()) {
+        double pt= sqrt(p.momentum.x * p.momentum.x + p.momentum.y * p.momentum.y);
+        Bz= tracks.at(p.tracks_begin).omega / a * pt * std::copysign(1.0, p.charge);
+      }
+    }
+    return Bz;
+  }
+
+  /*  
+  ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > XPtoPar(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in,
+							   const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+							   const TVector3& V, 
+							   const float& Bz) {
+    
+    const double cSpeed = 2.99792458e8 * 1.0e-9; //Reduced speed of light ???
+    float dft[5] = {-9., -9., -9., -9., -9.};
+    ROOT::VecOps::RVec<ROOT::VecOps::RVec<float> > out;
+    
+    for (const auto & rp: in) {
+      ROOT::VecOps::RVec<float> Par(dft, 5);
+    
+      if( rp.tracks_begin < tracks.size()) {
+
+        float D0_wrt0 = tracks.at(rp.tracks_begin).D0;
+	float Z0_wrt0 = tracks.at(rp.tracks_begin).Z0;
+	float phi0_wrt0 = tracks.at(rp.tracks_begin).phi;
+
+	TVector3 X( - D0_wrt0 * TMath::Sin(phi0_wrt0) , D0_wrt0 * TMath::Cos(phi0_wrt0) , Z0_wrt0);
+	TVector3 x = X - V;
+
+	TVector3 p(rp.momentum.x, rp.momentum.y, rp.momentum.z);
+
+	double a = - rp.charge * Bz * cSpeed;  // Units are Tesla, GeV and meters
+	double pt = p.Pt();
+	double C = a/(2 * pt); // Half curvature
+	double r2 = x(0) * x(0) + x(1) * x(1);
+	double cross = x(0) * p(1) - x(1) * p(0);
+	double T = TMath::Sqrt(pt * pt - 2 * a * cross + a * a * r2);
+	double phi0 = TMath::ATan2((p(1) - a * x(0)) / T, (p(0) + a * x(1)) / T); // Phi0
+	double D;// Impact parameter D
+	if (pt < 10.0) D = (T - pt) / a;
+	else D = (-2 * cross + a * r2) / (T + pt);
+	//
+	Par[0] = D;// Store D
+	Par[1] = phi0;// Store phi0
+	Par[2] = C;// Store C
+	//Longitudinal parameters
+	double B = C * TMath::Sqrt(TMath::Max(r2 - D * D, 0.0) / (1 + 2 * C * D));
+	double st = TMath::ASin(B) / C;
+	double ct = p(2) / pt;
+	double z0;
+	double dot = x(0) * p(0) + x(1) * p(1);
+	if (dot > 0.0) z0 = x(2) - ct * st;
+	else z0 = x(2) + ct * st;
+	//
+	Par[3] = z0;// Store z0
+	Par[4] = ct;// Store cot(theta)
+	//
+      }
+      //std::cout << "-> par.size(): " << Par.size() << std::endl;
+      //std::cout << "par: " << Par[0] << " " << Par[1] << Par[2] << Par[3] << Par[4] <<std::endl;
+      out.push_back(Par);
+    }
+    //std::cout << "--> in.size(): " << in.size() << std::endl;
+    //std::cout << "--> in.size(): " << in.size() << std::endl;
+    //std::cout << "--> out.size(): " << out.size() << std::endl;
+    //std::cout << "----------------------------" << std::endl;
+    //std::cout << "----------------------------" << std::endl;
+    return out;
+  }
+  
+  */
+  ROOT::VecOps::RVec<float> XPtoPar_dxy(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in,
+					const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+					const TVector3& V,
+					const float& Bz) {
+    
+    const double cSpeed = 2.99792458e8 * 1.0e-9; 
+                                        
+    ROOT::VecOps::RVec<float> out;
+
+    for (const auto & rp: in) {
+      
+      if( rp.tracks_begin < tracks.size()) {
+	
+        float D0_wrt0 = tracks.at(rp.tracks_begin).D0;
+        float Z0_wrt0 = tracks.at(rp.tracks_begin).Z0;
+        float phi0_wrt0 = tracks.at(rp.tracks_begin).phi;
+
+        TVector3 X( - D0_wrt0 * TMath::Sin(phi0_wrt0) , D0_wrt0 * TMath::Cos(phi0_wrt0) , Z0_wrt0);
+        TVector3 x = X - V;
+
+        TVector3 p(rp.momentum.x, rp.momentum.y, rp.momentum.z);
+
+        double a = - rp.charge * Bz * cSpeed;       
+        double pt = p.Pt();
+        double r2 = x(0) * x(0) + x(1) * x(1);
+        double cross = x(0) * p(1) - x(1) * p(0);
+        double T = TMath::Sqrt(pt * pt - 2 * a * cross + a * a * r2);                                                         
+        double D; 
+        
+	if (pt < 10.0) D = (T - pt) / a;
+        else D = (-2 * cross + a * r2) / (T + pt);
+        
+	out.push_back(D);
+	
+      } else {
+	out.push_back(-9.);
+      }
+    }
+    return out;
+  }
+
+  
+  
+  ROOT::VecOps::RVec<float> XPtoPar_dz(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in,
+                                        const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+                                        const TVector3& V,
+                                        const float& Bz) {
+
+    const double cSpeed = 2.99792458e8 * 1.0e-9; //Reduced speed of light ???                                                                                                      
+
+    ROOT::VecOps::RVec<float> out;
+
+    for (const auto & rp: in) {
+
+      if( rp.tracks_begin < tracks.size()) {
+
+        float D0_wrt0 = tracks.at(rp.tracks_begin).D0;
+        float Z0_wrt0 = tracks.at(rp.tracks_begin).Z0;
+        float phi0_wrt0 = tracks.at(rp.tracks_begin).phi;
+
+        TVector3 X( - D0_wrt0 * TMath::Sin(phi0_wrt0) , D0_wrt0 * TMath::Cos(phi0_wrt0) , Z0_wrt0);
+        TVector3 x = X - V;
+
+        TVector3 p(rp.momentum.x, rp.momentum.y, rp.momentum.z);
+
+        double a = - rp.charge * Bz * cSpeed;
+        double pt = p.Pt();
+        double C = a/(2 * pt);
+        double r2 = x(0) * x(0) + x(1) * x(1);
+        double cross = x(0) * p(1) - x(1) * p(0);
+        double T = TMath::Sqrt(pt * pt - 2 * a * cross + a * a * r2);
+        double D;
+        if (pt < 10.0) D = (T - pt) / a;
+        else D = (-2 * cross + a * r2) / (T + pt);
+        double B = C * TMath::Sqrt(TMath::Max(r2 - D * D, 0.0) / (1 + 2 * C * D));
+        double st = TMath::ASin(B) / C;
+        double ct = p(2) / pt;
+        double z0;
+        double dot = x(0) * p(0) + x(1) * p(1);
+        if (dot > 0.0) z0 = x(2) - ct * st;
+        else z0 = x(2) + ct * st;
+
+        out.push_back(z0);
+      } else {
+        out.push_back(-9.);
+      }
+    }
+    return out;
+  }
+
+  ROOT::VecOps::RVec<float> XPtoPar_phi(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in,
+					const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+					const TVector3& V,
+					const float& Bz) {
+
+    const double cSpeed = 2.99792458e8 * 1.0e-9; //Reduced speed of light ???                                                                                                                               
+
+    ROOT::VecOps::RVec<float> out;
+
+    for (const auto & rp: in) {
+
+      if( rp.tracks_begin < tracks.size()) {
+
+        float D0_wrt0 = tracks.at(rp.tracks_begin).D0;
+        float Z0_wrt0 = tracks.at(rp.tracks_begin).Z0;
+        float phi0_wrt0 = tracks.at(rp.tracks_begin).phi;
+
+        TVector3 X( - D0_wrt0 * TMath::Sin(phi0_wrt0) , D0_wrt0 * TMath::Cos(phi0_wrt0) , Z0_wrt0);
+        TVector3 x = X - V;
+
+        TVector3 p(rp.momentum.x, rp.momentum.y, rp.momentum.z);
+
+        double a = - rp.charge * Bz * cSpeed;
+        double pt = p.Pt();
+        double r2 = x(0) * x(0) + x(1) * x(1);
+        double cross = x(0) * p(1) - x(1) * p(0);
+        double T = TMath::Sqrt(pt * pt - 2 * a * cross + a * a * r2);
+        double phi0 = TMath::ATan2((p(1) - a * x(0)) / T, (p(0) + a * x(1)) / T);
+       
+	out.push_back(phi0);
+
+      } else {
+        out.push_back(-9.);
+      }
+    }
+    return out;
+  }
+
+  ROOT::VecOps::RVec<float> XPtoPar_C(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in,
+				       const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+				       const TVector3& V,
+				       const float& Bz) {
+
+    const double cSpeed = 2.99792458e8 * 1.0e3 * 1.0e-15;
+    ROOT::VecOps::RVec<float> out;
+
+    for (const auto & rp: in) {
+
+      if( rp.tracks_begin < tracks.size()) {
+
+        TVector3 p(rp.momentum.x, rp.momentum.y, rp.momentum.z);
+
+        //double a = - rp.charge * Bz * cSpeed;
+        double a = std::copysign(1.0, rp.charge) * Bz * cSpeed;
+	double pt = p.Pt();
+        double C = a/(2 * pt);
+	
+	out.push_back(C);
+      } else {
+        out.push_back(-9.);
+      }
+    }
+    return out;
+  }
+
+  ROOT::VecOps::RVec<float> XPtoPar_ct(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& in,
+				       const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+				       const TVector3& V,
+				       const float& Bz) {
+
+    const double cSpeed = 2.99792458e8 * 1.0e-9;
+    ROOT::VecOps::RVec<float> out;
+
+    for (const auto & rp: in) {
+
+      if( rp.tracks_begin < tracks.size()) {
+
+        TVector3 p(rp.momentum.x, rp.momentum.y, rp.momentum.z);
+	double pt = p.Pt();
+       
+        double ct = p(2) / pt;
+	
+	out.push_back(ct);
+
+      } else {
+        out.push_back(-9.);
+      }
+    }
+    return out;
+  }
+
+
+
+
+
+  
+
+/*  
+  ROOT::VecOps::RVec<float> XPtoPar_dxy(const ROOT::VecOps::RVec<TVectorD>& in) {
+    ROOT::VecOps::RVec<float> out;
+    for(auto & par: in) 
+      out.push_back(par(0));
+    return out;
+  }
+
+  ROOT::VecOps::RVec<float> XPtoPar_dz(const ROOT::VecOps::RVec<TVectorD>& in) {
+    ROOT::VecOps::RVec<float> out;
+    for(auto & par: in)
+      out.push_back(par(3));
+    return out;
+  }
+  
+  ROOT::VecOps::RVec<float> XPtoPar_phi0(const ROOT::VecOps::RVec<TVectorD>& in) {
+    ROOT::VecOps::RVec<float> out;
+    for(auto & par: in)
+      out.push_back(par(1));
+    return out;
+  }
+
+  ROOT::VecOps::RVec<float> XPtoPar_C(const ROOT::VecOps::RVec<TVectorD>& in) {
+    ROOT::VecOps::RVec<float> out;
+    for(auto & par: in)
+      out.push_back(par(2));
+    return out;
+  }
+  
+  ROOT::VecOps::RVec<float> XPtoPar_ct(const ROOT::VecOps::RVec<TVectorD>& in) {
+    ROOT::VecOps::RVec<float> out;
+    for(auto & par: in)
+      out.push_back(par(4));
+    return out;
+  }
+*/
+
 ROOT::VecOps::RVec<float>
 getRP2TRK_D0(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
              ROOT::VecOps::RVec<edm4hep::TrackState> tracks) {

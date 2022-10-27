@@ -18,6 +18,8 @@
 
 /* *************************
 //COMMENTS
+1. Neutral particles (Clusters??)
+2. units of measurement?
 
 ************************ */
 
@@ -91,19 +93,25 @@ namespace FCCAnalyses {
       }
       return out;
     };
-    
-    
-    auto cast_constituent_4 = [](const auto& recin, const auto& mcin, const auto& jcs, const auto& mc, auto&& meth) {
-      //auto cast_constituent_2 = [](const auto& jcs, auto&& meth) {                                                  
+
+    auto cast_constituent_4 = [](const auto& jcs, const auto& coll1, const auto& coll2, const auto& coll3,auto&& meth) {
+      //auto cast_constituent_2 = [](const auto& jcs, auto&& meth) { 
       rv::RVec<FCCAnalysesJetConstituentsData> out;
       for (const auto& jc : jcs) {
-        //std::cout<<"new jet:  " <<jc.size()<<std::endl;                                                                                                                                     
-        out.emplace_back(meth(recin, mcin, jc, mc));
-        //out.emplace_back(meth(jc));                                                                                                                                    
+        //std::cout<<"new jet:  " <<jc.size()<<std::endl;
+        out.emplace_back(meth(jc, coll1, coll2, coll3));
+        //out.emplace_back(meth(jc));         
       }
       return out;
     };
-      
+    
+ 
+    rv::RVec<FCCAnalysesJetConstituentsData> get_Bz(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+                                                    const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
+      return cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_Bz);
+    }
+    
+    
     rv::RVec<FCCAnalysesJetConstituentsData> get_pt(const rv::RVec<FCCAnalysesJetConstituents>& jcs) {
       return cast_constituent(jcs, ReconstructedParticle::get_pt);
     }
@@ -156,7 +164,7 @@ namespace FCCAnalyses {
       return out;
     }
 
-    //displacement
+    //displacement (wrt (0,0,0))
     rv::RVec<FCCAnalysesJetConstituentsData> get_d0(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
 						    const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
       return cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_D0);
@@ -167,6 +175,99 @@ namespace FCCAnalyses {
       return cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_Z0);
     }
 
+    rv::RVec<FCCAnalysesJetConstituentsData> get_phi0(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+                                                    const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
+      return cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_phi);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> get_omega(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+                                                    const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
+      return cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_omega);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> get_tanLambda(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+							   const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
+      return cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_tanLambda);
+    }
+
+    //displacement (wrt Vertex)
+
+    /*
+    rv::RVec< rv::RVec< rv::RVec<float>  > > XPtoPar(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+						     const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+						     const TVector3& V,
+						     const float& Bz) {
+      rv::RVec<rv::RVec<rv::RVec<float> > > out;
+      for(const auto & jc : jcs) {
+	out.emplace_back(ReconstructedParticle2Track::XPtoPar(jc, tracks, V, Bz));
+      }
+      return out;
+      //return cast_constituent_4(jcs, tracks, V, Bz, ReconstructedParticle2Track::XPtoPar);
+    }
+    */
+ 
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_dxy(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+							 const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+							 const TVector3& V,
+							 const float& Bz) {
+      
+      return cast_constituent_4(jcs, tracks, V, Bz, ReconstructedParticle2Track::XPtoPar_dxy); 
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_dz(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+							const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+							const TVector3& V,
+							const float& Bz) {
+
+      return cast_constituent_4(jcs, tracks, V, Bz, ReconstructedParticle2Track::XPtoPar_dz);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_phi(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+							 const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+							 const TVector3& V,
+							 const float& Bz) {
+
+      return cast_constituent_4(jcs, tracks, V, Bz, ReconstructedParticle2Track::XPtoPar_phi);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_C(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+						       const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+						       const TVector3& V,
+						       const float& Bz) {
+      
+      return cast_constituent_4(jcs, tracks, V, Bz, ReconstructedParticle2Track::XPtoPar_C);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_ct(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+							const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+							const TVector3& V,
+							const float& Bz) {
+      
+      return cast_constituent_4(jcs, tracks, V, Bz, ReconstructedParticle2Track::XPtoPar_ct);
+    }
+
+    /*      
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_dxy(const rv::RVec< rv::RVec<TVectorD> >& par) {
+      return cast_constituent(par, ReconstructedParticle2Track::XPtoPar_dxy);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_dz(const rv::RVec<rv::RVec<TVectorD> >& par) {
+      return cast_constituent(par, ReconstructedParticle2Track::XPtoPar_dz);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_phi0(const rv::RVec< rv::RVec<TVectorD> >& par) {
+      return cast_constituent(par, ReconstructedParticle2Track::XPtoPar_phi0);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_C(const rv::RVec<rv::RVec<TVectorD> >& par) {
+      return cast_constituent(par, ReconstructedParticle2Track::XPtoPar_C);
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> XPtoPar_ct(const rv::RVec< rv::RVec<TVectorD> >& par) {
+      return cast_constituent(par, ReconstructedParticle2Track::XPtoPar_ct);
+    }
+    */
+   
     //Covariance matrix elements of tracks parameters
     //diagonal
     rv::RVec<FCCAnalysesJetConstituentsData> get_omega_cov(const rv::RVec<FCCAnalysesJetConstituents>& jcs,
@@ -275,6 +376,17 @@ namespace FCCAnalyses {
       rv::RVec<FCCAnalysesJetConstituentsData> D0 = cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_D0);
       rv::RVec<FCCAnalysesJetConstituentsData> phi0 = cast_constituent_2(jcs, tracks, ReconstructedParticle2Track::getRP2TRK_phi);
       
+      //for (size_t i = 0; i < jets.size(); ++i){
+      //	TVector2 jetP3();
+      //}
+
+      //for (auto & j: jets) {
+      //	TVector2 p(j.momentum.x, j.momentum.y);
+      //FCCAnalysesJetConstituentsData projs;
+      //for(size_t i = 0; i < )
+      //result.push_back(tlv.Eta());
+      //}
+      
       for(int i = 0; i < jets.size(); ++i){
 	TVector2 p(jets[i].momentum.x, jets[i].momentum.y);
 	FCCAnalysesJetConstituentsData cprojs;
@@ -314,7 +426,56 @@ namespace FCCAnalyses {
       return out;
     }
 
+    /*
+    rv::RVec<FCCAnalysesJetConstituentsData> get_Sip2dVal_clusterV(const rv::RVec<fastjet::PseudoJet>& jets,
+								   const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+								   const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+								   const TVector3& V) {
+      rv::RVec<FCCAnalysesJetConstituentsData> out;
 
+      float Bz = ReconstructedParticle2Track::Bz(jcs, tracks);
+      rv::RVec<FCCAnalysesJetConstituentsData> D0 = XPtoPar_dxy(jcs, tracks, V, Bz);
+      rv::RVec<FCCAnalysesJetConstituentsData> phi0 = XPtoPar_phi(jcs, tracks, V, Bz);
+      
+      for(int i = 0; i < jets.size(); ++i){
+        TVector2 p(jets[i].px(), jets[i].py());
+        FCCAnalysesJetConstituentsData cprojs;
+        for (int j = 0; j < jcs[i].size(); ++j) {
+          if (D0.at(i).at(j) != -9) {
+            TVector2 d0( - D0.at(i).at(j) * TMath::Sin(phi0.at(i).at(j)) , D0.at(i).at(j) * TMath::Cos(phi0.at(i).at(j))  );
+            cprojs.push_back( TMath::Sign(1, d0*p) * fabs(D0.at(i).at(j))  );
+          } else {
+            cprojs.push_back(-9.);
+          }
+        }
+        out.push_back(cprojs);
+      }
+      return out;
+    }
+    */
+
+    rv::RVec<FCCAnalysesJetConstituentsData> get_Sip2dVal_clusterV(const rv::RVec<fastjet::PseudoJet>& jets,
+								   const rv::RVec<FCCAnalysesJetConstituentsData>& D0,
+								   const rv::RVec<FCCAnalysesJetConstituentsData>& phi0,
+                                                                   const TVector3& V,
+								   const float Bz) {
+      rv::RVec<FCCAnalysesJetConstituentsData> out;
+
+      for(int i = 0; i < jets.size(); ++i){
+        TVector2 p(jets[i].px(), jets[i].py());
+        FCCAnalysesJetConstituentsData cprojs;
+        for (int j = 0; j < D0[i].size(); ++j) {
+          if (D0.at(i).at(j) != -9) {
+            TVector2 d0( - D0.at(i).at(j) * TMath::Sin(phi0.at(i).at(j)) , D0.at(i).at(j) * TMath::Cos(phi0.at(i).at(j))  );
+            cprojs.push_back( TMath::Sign(1, d0*p) * fabs(D0.at(i).at(j))  );
+          } else {
+            cprojs.push_back(-9.);
+          }
+        }
+        out.push_back(cprojs);
+      }
+      return out;
+    }
 
 
     //The functions get_Sip2dSig and get_Sip2dVal can be made independent;
@@ -386,6 +547,57 @@ namespace FCCAnalyses {
       return out;
     }
 
+    /*
+    rv::RVec<FCCAnalysesJetConstituentsData> get_Sip3dVal_clusterV(const rv::RVec<fastjet::PseudoJet>& jets,
+								   const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+								   const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks,
+								   const TVector3& V) {
+      rv::RVec<FCCAnalysesJetConstituentsData> out;
+      rv::RVec<FCCAnalysesJetConstituentsData> D0 = XPtoPar_dxy(jcs, tracks, V, Bz);
+      rv::RVec<FCCAnalysesJetConstituentsData> Z0 = XPtoPar_dz(jcs, tracks, V, Bz);
+      rv::RVec<FCCAnalysesJetConstituentsData> phi0 = XPtoPar_phi(jcs, tracks, V, Bz);
+
+      for(int i = 0; i < jets.size(); ++i){
+        TVector3 p(jets[i].px(), jets[i].py(), jets[i].pz());
+        FCCAnalysesJetConstituentsData cprojs;
+        for (int j = 0; j < jcs[i].size(); ++j){
+          if(D0.at(i).at(j) != -9) {
+            TVector3 d( - D0.at(i).at(j) * TMath::Sin(phi0.at(i).at(j)) , D0.at(i).at(j)*TMath::Cos(phi0.at(i).at(j)), Z0.at(i).at(j) );
+            cprojs.push_back( TMath::Sign(1, d*p) * fabs( sqrt( D0.at(i).at(j)*D0.at(i).at(j) + Z0.at(i).at(j)*Z0.at(i).at(j) ) ) );
+          } else {
+            cprojs.push_back(-9);
+          }
+        }
+        out.push_back(cprojs);
+      }
+      return out;
+    }
+    */
+
+    rv::RVec<FCCAnalysesJetConstituentsData> get_Sip3dVal_clusterV(const rv::RVec<fastjet::PseudoJet>& jets,
+                                                                   const rv::RVec<FCCAnalysesJetConstituentsData>& D0,
+								   const rv::RVec<FCCAnalysesJetConstituentsData>& Z0,
+                                                                   const rv::RVec<FCCAnalysesJetConstituentsData>& phi0,
+                                                                   const TVector3& V,
+                                                                   const float Bz) {
+      rv::RVec<FCCAnalysesJetConstituentsData> out;
+
+      for(int i = 0; i < jets.size(); ++i){
+        TVector3 p(jets[i].px(), jets[i].py(), jets[i].pz());
+        FCCAnalysesJetConstituentsData cprojs;
+        for (int j = 0; j < D0[i].size(); ++j){
+          if(D0.at(i).at(j) != -9) {
+            TVector3 d( - D0.at(i).at(j) * TMath::Sin(phi0.at(i).at(j)) , D0.at(i).at(j)*TMath::Cos(phi0.at(i).at(j)), Z0.at(i).at(j) );
+            cprojs.push_back( TMath::Sign(1, d*p) * fabs( sqrt( D0.at(i).at(j)*D0.at(i).at(j) + Z0.at(i).at(j)*Z0.at(i).at(j) ) ) );
+          } else {
+            cprojs.push_back(-9);
+          }
+        }
+        out.push_back(cprojs);
+      }
+      return out;
+    }
+
 
     rv::RVec<FCCAnalysesJetConstituentsData> get_Sip3dSig(const rv::RVec<FCCAnalysesJetConstituentsData>& Sip3dVals,
 							  const rv::RVec<FCCAnalysesJetConstituentsData>& err2_D0,
@@ -433,6 +645,7 @@ namespace FCCAnalyses {
       return out;
     }
 
+    
     rv::RVec<FCCAnalysesJetConstituentsData> get_JetDistVal_cluster(const rv::RVec<fastjet::PseudoJet>& jets,
 								    const rv::RVec<FCCAnalysesJetConstituents>& jcs,
 								    const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks) {
@@ -450,6 +663,35 @@ namespace FCCAnalyses {
             TVector3 p_ct(ct[j].momentum.x, ct[j].momentum.y, ct[j].momentum.z);
             TVector3 r_jet(0.0, 0.0, 0.0);
             TVector3 n = p_ct.Cross(p_jet).Unit(); //What if they are parallel? 
+            tmp.push_back( n.Dot(d - r_jet) );
+          } else {
+            tmp.push_back(-9);
+          }
+        }
+        out.push_back(tmp);
+      }
+      return out;
+    }
+
+    rv::RVec<FCCAnalysesJetConstituentsData> get_JetDistVal_clusterV(const rv::RVec<fastjet::PseudoJet>& jets,
+								     const rv::RVec<FCCAnalysesJetConstituents>& jcs,
+								     const rv::RVec<FCCAnalysesJetConstituentsData>& D0,
+								     const rv::RVec<FCCAnalysesJetConstituentsData>& Z0,
+								     const rv::RVec<FCCAnalysesJetConstituentsData>& phi0,
+								     const TVector3& V,
+								     const float Bz) {
+      rv::RVec<FCCAnalysesJetConstituentsData> out;
+
+      for(int i = 0; i < jets.size(); ++i){
+        FCCAnalysesJetConstituentsData tmp;
+        TVector3 p_jet(jets[i].px(), jets[i].py(), jets[i].pz());
+        FCCAnalysesJetConstituents ct = jcs.at(i);
+        for(int j = 0; j < ct.size(); ++j) {
+          if (D0.at(i).at(j) != -9) {
+            TVector3 d( - D0.at(i).at(j)* TMath::Sin(phi0.at(i).at(j)) , D0.at(i).at(j)*TMath::Cos(phi0.at(i).at(j)), Z0.at(i).at(j) );
+            TVector3 p_ct(ct[j].momentum.x, ct[j].momentum.y, ct[j].momentum.z);
+            TVector3 r_jet(0.0, 0.0, 0.0);
+            TVector3 n = p_ct.Cross(p_jet).Unit(); //What if they are parallel?                                                                                                                             
             tmp.push_back( n.Dot(d - r_jet) );
           } else {
             tmp.push_back(-9);
@@ -496,10 +738,10 @@ namespace FCCAnalyses {
 	FCCAnalysesJetConstituentsData pids = JetsConstituents_Pids.at(i);
 	FCCAnalysesJetConstituentsData tmp;
 	for(int j = 0; j < ct.size(); ++j) {
-	  //if(ct.at(j).tracks_begin > 0 && ct.at(j).tracks_begin < trackdata.size()) { //CHECK
+	  //if(ct.at(j).tracks_begin > 0 && ct.at(j).tracks_begin < trackdata.size()) { //??????????? CHECK!!!
 	  if (ct.at(j).tracks_begin < trackdata.size()) {
 	    if( abs(pids.at(j)) == 11) {
-	      tmp.push_back(0.51099895);
+	      tmp.push_back(0.00051099895);
 	    } else if (abs(pids.at(j)) == 13) {
 	      tmp.push_back(105.65837);
 	    } else {
@@ -528,6 +770,11 @@ namespace FCCAnalyses {
       return out;
     }
     
+    
+    //rv::RVec<FCCAnalysesJetConstituentsData> get_pt(const rv::RVec<FCCAnalysesJetConstituents>& jcs) {
+    //  return cast_constituent(jcs, ReconstructedParticle::get_pt);
+    //}
+
 
     //kinematics const/jet
     rv::RVec<FCCAnalysesJetConstituentsData> get_erel_log(const rv::RVec<edm4hep::ReconstructedParticleData>& jets,
@@ -697,10 +944,11 @@ namespace FCCAnalyses {
     
     rv::RVec<FCCAnalysesJetConstituentsData> get_PIDs(const ROOT::VecOps::RVec< int > recin,
 						      const ROOT::VecOps::RVec< int > mcin,
+						      //const rv::RVec<FCCAnalysesJetConstituents>& jcs,
 						      const rv::RVec<edm4hep::ReconstructedParticleData>& RecPart, 
 						      const rv::RVec<edm4hep::MCParticleData>& Particle,
 						      const rv::RVec<edm4hep::ReconstructedParticleData>& jets) { 
-     
+      //return cast_constituent_4(recin, mcin, jcs, Particle, FCCAnalyses::ReconstructedParticle2MC::getRP2MC_pdg);
       rv::RVec<FCCAnalysesJetConstituentsData> out;
       FCCAnalysesJetConstituentsData PIDs = FCCAnalyses::ReconstructedParticle2MC::getRP2MC_pdg(recin, mcin, RecPart, Particle);
       
@@ -716,6 +964,7 @@ namespace FCCAnalyses {
 
     rv::RVec<FCCAnalysesJetConstituentsData> get_PIDs_cluster(const ROOT::VecOps::RVec< int > recin,
 							      const ROOT::VecOps::RVec< int > mcin,
+							      //const rv::RVec<FCCAnalysesJetConstituents>& jcs,
 							      const rv::RVec<edm4hep::ReconstructedParticleData>& RecPart,
 							      const rv::RVec<edm4hep::MCParticleData>& Particle,
 							      const std::vector<std::vector<int>>& indices) {
@@ -950,6 +1199,7 @@ namespace FCCAnalyses {
       } 
       return out;
     }
+
 
   }  // namespace JetConstituentsUtils
 }  // namespace FCCAnalyses
